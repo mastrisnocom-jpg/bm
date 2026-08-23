@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows XP Professional - Web OS</title>
-  <!-- Bootstrap Icons (Ribuan Pilihan Ikon) -->
+  <title>Windows XP Professional - Web OS v3</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   
   <style>
@@ -23,7 +22,6 @@
       background-color: #000;
     }
 
-    /* Wallpaper Asli Windows XP Bliss (Dapat Diganti via Control Panel) */
     #desktop {
       width: 100vw;
       height: calc(100vh - 30px);
@@ -48,6 +46,7 @@
       cursor: pointer;
       border: 1px solid transparent;
       border-radius: 3px;
+      z-index: 10;
     }
     .desktop-icon:hover {
       background: rgba(49, 106, 197, 0.4);
@@ -102,7 +101,6 @@
     }
     #start-btn:hover { filter: brightness(1.1); }
 
-    /* System Tray */
     #system-tray {
       height: 100%;
       background: linear-gradient(to bottom, #0c82dc 0%, #159df5 10%, #0d79cc 90%, #055a9e 100%);
@@ -173,7 +171,7 @@
     .footer-btn { display: flex; align-items: center; gap: 5px; color: white; font-size: 11px; cursor: pointer; padding: 3px 6px; }
     .footer-btn:hover { background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-    /* Kalender Matriks 1, 2, 3... */
+    /* Kalender Matriks */
     #calendar-popup {
       position: fixed; bottom: 35px; right: 5px; width: 280px; background: #fff;
       border: 1px solid #0055ea; border-radius: 4px; box-shadow: 0 0 15px rgba(0,0,0,0.4);
@@ -188,6 +186,31 @@
     .cal-cell.today { background: #245edb; color: white; font-weight: bold; }
     .cal-cell.empty { color: #ccc; }
 
+    /* Jendela Notepad XP */
+    #notepad-window {
+      position: fixed; top: 100px; left: 150px; width: 500px; height: 350px;
+      background: #ECE9D8; border: 3px solid #0055ea; border-radius: 6px;
+      display: none; flex-direction: column; z-index: 15000; box-shadow: 2px 2px 15px rgba(0,0,0,0.4);
+    }
+    #notepad-window.open { display: flex; }
+    .win-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 4px 8px; font-weight: bold; font-size: 12px; display: flex; justify-content: space-between; cursor: move; }
+    .win-body { flex: 1; padding: 5px; display: flex; flex-direction: column; }
+    .notepad-textarea { flex: 1; resize: none; border: 1px solid #7f9db9; padding: 5px; font-family: monospace; font-size: 13px; outline: none; }
+
+    /* Control Panel Modal */
+    #control-panel-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 600px; height: 520px; background: #ECE9D8; border: 3px solid #0055ea;
+      border-radius: 6px; display: none; flex-direction: column; z-index: 20000; box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    }
+    #control-panel-modal.open { display: flex; }
+    .cp-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 6px 10px; font-weight: bold; display: flex; justify-content: space-between; }
+    .cp-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 12px; }
+    .cp-row { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .cp-row input, .cp-row select { padding: 5px; border: 1px solid #7f9db9; border-radius: 2px; }
+    .btn-xp { background: linear-gradient(#f0f0f0, #e0e0e0); border: 1px solid #7f9db9; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
+    .btn-xp:hover { background: linear-gradient(#e5f4fb, #c8e5fc); border-color: #3c7fb1; }
+
     /* Shutdown Screen */
     #shutdown-screen {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -195,20 +218,6 @@
       flex-direction: column; align-items: center; justify-content: center; color: white;
     }
     #shutdown-screen.active { display: flex; }
-
-    /* Control Panel Modal */
-    #control-panel-modal {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 550px; height: 480px; background: #ECE9D8; border: 3px solid #0055ea;
-      border-radius: 6px; display: none; flex-direction: column; z-index: 20000; box-shadow: 0 0 25px rgba(0,0,0,0.6);
-    }
-    #control-panel-modal.open { display: flex; }
-    .cp-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 6px 10px; font-weight: bold; display: flex; justify-content: space-between; }
-    .cp-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 12px; }
-    .cp-row { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
-    .cp-row input, .cp-row select { padding: 5px; border: 1px solid #7f9db9; border-radius: 2px; }
-    .btn-xp { background: linear-gradient(#f0f0f0, #e0e0e0); border: 1px solid #7f9db9; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-    .btn-xp:hover { background: linear-gradient(#e5f4fb, #c8e5fc); border-color: #3c7fb1; }
   </style>
 </head>
 <body onclick="handleGlobalClick()">
@@ -222,15 +231,15 @@
   <div id="shutdown-screen">
     <i class="bi bi-power" style="font-size: 64px; margin-bottom: 15px; color: #ff4444;"></i>
     <h2>Windows is shutting down...</h2>
-    <p style="margin-top: 10px; font-size: 13px; color: #aaa;">Anda dapat menutup tab ini atau memuat ulang halaman untuk menyalakan kembali.</p>
+    <p style="margin-top: 10px; font-size: 13px; color: #aaa;">Anda dapat menutup tab ini atau merefresh halaman untuk menyalakan kembali.</p>
   </div>
 
   <!-- Area Desktop -->
   <div id="desktop">
-    <!-- Icon Akses Folder/File Lokal -->
-    <div class="desktop-icon" style="top: 20px; left: 20px;" ondblclick="openLocalFileExplorer()">
-      <i class="bi bi-folder-fill" style="color: #ffca28;"></i>
-      <span>File Explorer</span>
+    <!-- Icon Notepad Bawaan -->
+    <div class="desktop-icon" style="top: 20px; left: 20px;" ondblclick="openNotepad()">
+      <i class="bi bi-journal-text" style="color: #4caf50;"></i>
+      <span>Notepad</span>
     </div>
 
     <!-- Icon Control Panel -->
@@ -279,7 +288,21 @@
     <div class="cal-grid" id="cal-days-container" style="margin-top: 4px;"></div>
   </div>
 
-  <!-- Control Panel untuk Pengaturan Menu & Kustomisasi -->
+  <!-- Jendela Notepad -->
+  <div id="notepad-window" onclick="event.stopPropagation()">
+    <div class="win-header">
+      <span>Notepad - Untitled.txt</span>
+      <span style="cursor:pointer;" onclick="closeNotepad()">✕</span>
+    </div>
+    <div class="win-body">
+      <textarea class="notepad-textarea" placeholder="Tulis catatan Anda di sini..."></textarea>
+      <div style="margin-top: 5px; display:flex; justify-content:flex-end;">
+        <button class="btn-xp" onclick="alert('Catatan aktif disimpan di memori sementara.')">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control Panel (Manajemen Menu, Folder, Wallpaper) -->
   <div id="control-panel-modal" onclick="event.stopPropagation()">
     <div class="cp-header">
       <span>Control Panel - Pengaturan Menu & Sistem</span>
@@ -288,25 +311,34 @@
     <div class="cp-body">
       <h3>Pengaturan Wallpaper</h3>
       <div class="cp-row">
-        <label>URL Gambar Wallpaper Desktop:</label>
-        <input type="text" id="input-wallpaper" value="https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png">
-        <button class="btn-xp" onclick="updateWallpaper()">Terapkan Wallpaper</button>
+        <label>Pilih Wallpaper Bawaan:</label>
+        <select id="preset-wallpaper" onchange="changePresetWallpaper(this.value)">
+          <option value="https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png">Windows XP Bliss (Hijau)</option>
+          <option value="https://images.unsplash.com/photo-1506744038136-46273834b3fb">Pemandangan Alam (Landscape)</option>
+          <option value="https://images.unsplash.com/photo-1534447677768-be436bb09401">Langit Malam Bintang</option>
+          <option value="https://images.unsplash.com/photo-1579546929518-9e396f3cc809">Gradasi Warna Modern</option>
+        </select>
+      </div>
+      <div class="cp-row">
+        <label>Atau Upload Wallpaper dari Perangkat (HP/Laptop):</label>
+        <input type="file" id="device-wallpaper" accept="image/*" onchange="uploadDeviceWallpaper(event)">
       </div>
       <hr style="margin: 15px 0; border:0; border-top:1px solid #ccc;">
       
-      <h3>Tambah Menu / Aplikasi Baru</h3>
+      <h3>Tambah Menu / Folder Baru</h3>
       <div class="cp-row">
-        <label>Nama Menu:</label>
+        <label>Nama Menu / Folder:</label>
         <input type="text" id="new-menu-name" placeholder="Contoh: Laporan Keuangan">
       </div>
       <div class="cp-row">
-        <label>Link Tujuan (URL Asli Google Apps Script / Web):</label>
+        <label>Link Tujuan (Kosongkan jika ingin membuat Folder):</label>
         <input type="text" id="new-menu-url" placeholder="https://script.google.com/...">
       </div>
       <div class="cp-row">
-        <label>Pilih Ikon (Bootstrap Icon Name):</label>
+        <label>Pilih Ikon:</label>
         <select id="new-menu-icon">
           <option value="bi-app-indicator">Default App</option>
+          <option value="bi-folder-fill">Folder Dokumen</option>
           <option value="bi-house-door-fill">Home / Beranda</option>
           <option value="bi-speedometer2">Dashboard</option>
           <option value="bi-exclamation-triangle-fill">Kerusakan / Warning</option>
@@ -318,12 +350,18 @@
           <option value="bi-ui-checks">Checklist Harian</option>
           <option value="bi-bar-chart-line-fill">Grafik / Statistik</option>
           <option value="bi-cpu-fill">Sistem / CPU</option>
-          <option value="bi-folder2-open">Folder Dokumen</option>
-          <option value="bi-shield-check">Keamanan</option>
           <option value="bi-tools">Peralatan / Tools</option>
         </select>
       </div>
-      <button class="btn-xp" onclick="addNewMenu()" style="margin-top: 5px;">Simpan & Tambah Menu</button>
+      <button class="btn-xp" onclick="addNewMenu()" style="margin-top: 5px;">Tambah ke Desktop & Start Menu</button>
+      
+      <hr style="margin: 15px 0; border:0; border-top:1px solid #ccc;">
+      <h3>Hapus Menu yang Ada</h3>
+      <div class="cp-row">
+        <label>Pilih Menu untuk Dihapus:</label>
+        <select id="delete-menu-select"></select>
+        <button class="btn-xp" onclick="deleteSelectedMenu()" style="margin-top:5px; background: #ffebee; color: #c62828;">Hapus Menu Terpilih</button>
+      </div>
     </div>
   </div>
 
@@ -336,11 +374,10 @@
 
     <div style="flex:1;"></div>
 
-    <!-- Notification Tray -->
     <div id="system-tray">
       <div class="tray-icons">
-        <i class="bi bi-arrows-fullscreen" title="Full Screen" onclick="toggleFullScreen()"></i>
-        <i class="bi bi-folder2-open" title="Akses File/Folder Lokal" onclick="openLocalFileExplorer()"></i>
+        <i class="bi bi-journal-text" title="Notepad" onclick="openNotepad()"></i>
+        <i class="bi bi-gear" title="Control Panel" onclick="openControlPanel()"></i>
         <i class="bi bi-volume-up-fill" title="Volume" onclick="playSound()"></i>
       </div>
       <div id="tray-clock" onclick="toggleCalendar(event)">12:00 PM</div>
@@ -369,27 +406,35 @@
     // Render Ulang Desktop Icons & Start Menu
     function renderDesktopAndMenu() {
       const desktop = document.getElementById('desktop');
-      // Hapus icon lama kecuali file explorer & control panel
       const oldIcons = desktop.querySelectorAll('.desktop-icon:not(:nth-child(1)):not(:nth-child(2))');
       oldIcons.forEach(el => el.remove());
 
       const leftList = document.getElementById('start-left-list');
       const rightList = document.getElementById('start-right-list');
+      const deleteSelect = document.getElementById('delete-menu-select');
+      
       leftList.innerHTML = '';
       rightList.innerHTML = '';
+      deleteSelect.innerHTML = '';
 
       let startX = 110, startY = 20;
 
       appMenus.forEach((item, index) => {
-        // Buat Icon Desktop dengan posisi grid otomatis
+        // Icon Desktop
         const el = document.createElement('div');
         el.className = 'desktop-icon';
         el.style.top = `${startY}px`;
         el.style.left = `${startX}px`;
-        el.ondblclick = () => window.open(item.url, '_blank'); // Buka link asli tanpa iframe
-        el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#fff'}"></i><span>${item.name}</span>`;
         
-        // Fitur Drag & Drop icon dipindah-pindah
+        el.ondblclick = () => {
+          if (item.url) {
+            window.open(item.url, '_blank');
+          } else {
+            alert(`Membuka folder lokal: ${item.name}`);
+          }
+        };
+
+        el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#fff'}"></i><span>${item.name}</span>`;
         makeDraggable(el);
         desktop.appendChild(el);
 
@@ -399,10 +444,14 @@
           startX += 90;
         }
 
-        // Masukkan ke Start Menu (Dibagi 2 kolom)
+        // Start Menu Item
         const menuEl = document.createElement('div');
         menuEl.className = 'start-item';
-        menuEl.onclick = () => { window.open(item.url, '_blank'); closeAllPopups(); };
+        menuEl.onclick = () => {
+          if (item.url) window.open(item.url, '_blank');
+          else alert(`Folder: ${item.name}`);
+          closeAllPopups();
+        };
         menuEl.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#333'}"></i><span><b>${item.name}</b></span>`;
         
         if (index < Math.ceil(appMenus.length / 2)) {
@@ -410,10 +459,16 @@
         } else {
           rightList.appendChild(menuEl);
         }
+
+        // Opsi Delete di Control Panel
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.innerText = item.name;
+        deleteSelect.appendChild(opt);
       });
     }
 
-    // Fungsi Drag and Drop Icon Desktop
+    // Fungsi Drag and Drop Sempurna untuk Icon Desktop
     function makeDraggable(elmnt) {
       let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.onmousedown = dragMouseDown;
@@ -442,37 +497,16 @@
       }
     }
 
-    // Akses Folder atau File Perangkat (Lokal HP / Desktop)
-    function openLocalFileExplorer() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.multiple = true;
-      input.onchange = e => {
-        const files = e.target.files;
-        let fileNames = Array.from(files).map(f => f.name).join('\n');
-        alert(`Berhasil mengakses file perangkat:\n${fileNames}`);
-      };
-      input.click();
-    }
-
-    // Kontrol Layar Penuh (Full Screen)
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-
-    // Tombol Shutdown
-    function triggerShutdown() {
+    // Notepad Management
+    function openNotepad() {
       closeAllPopups();
-      document.getElementById('shutdown-screen').classList.add('active');
+      document.getElementById('notepad-window').classList.add('open');
+    }
+    function closeNotepad() {
+      document.getElementById('notepad-window').classList.remove('open');
     }
 
-    // Control Panel Handlers
+    // Control Panel & Wallpaper Handlers
     function openControlPanel() {
       closeAllPopups();
       document.getElementById('control-panel-modal').classList.add('open');
@@ -480,27 +514,55 @@
     function closeControlPanel() {
       document.getElementById('control-panel-modal').classList.remove('open');
     }
-    function updateWallpaper() {
-      const url = document.getElementById('input-wallpaper').value;
+
+    function changePresetWallpaper(url) {
       document.getElementById('desktop').style.background = `url('${url}') no-repeat center center fixed`;
       document.getElementById('desktop').style.backgroundSize = 'cover';
-      alert('Wallpaper berhasil diubah!');
     }
+
+    function uploadDeviceWallpaper(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('desktop').style.background = `url('${event.target.result}') no-repeat center center fixed`;
+          document.getElementById('desktop').style.backgroundSize = 'cover';
+          alert('Wallpaper dari perangkat berhasil dipasang!');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function addNewMenu() {
       const name = document.getElementById('new-menu-name').value;
       const url = document.getElementById('new-menu-url').value;
       const icon = document.getElementById('new-menu-icon').value;
-      if (!name || !url) {
-        alert('Nama dan URL menu wajib diisi!');
+      if (!name) {
+        alert('Nama menu/folder wajib diisi!');
         return;
       }
-      appMenus.push({ name, url, icon, color: '#0055ea' });
+      appMenus.push({ name, url, icon, color: url ? '#0055ea' : '#ffca28' });
       renderDesktopAndMenu();
       closeControlPanel();
-      alert('Menu baru berhasil ditambahkan ke Desktop & Start Menu!');
+      alert('Menu/Folder baru berhasil dibuat!');
     }
 
-    // Kalender Matriks Penuh (1, 2, 3...)
+    function deleteSelectedMenu() {
+      const idx = document.getElementById('delete-menu-select').value;
+      if (idx !== "") {
+        appMenus.splice(idx, 1);
+        renderDesktopAndMenu();
+        alert('Menu berhasil dihapus!');
+      }
+    }
+
+    // Shutdown Action
+    function triggerShutdown() {
+      closeAllPopups();
+      document.getElementById('shutdown-screen').classList.add('active');
+    }
+
+    // Kalender Matriks
     let currentCalDate = new Date();
     function renderCalendar() {
       const year = currentCalDate.getFullYear();
@@ -515,7 +577,6 @@
       const totalDays = new Date(year, month + 1, 0).getDate();
       const prevTotalDays = new Date(year, month, 0).getDate();
 
-      // Tanggal bulan sebelumnya
       for (let i = firstDayIndex; i > 0; i--) {
         const cell = document.createElement('div');
         cell.className = 'cal-cell empty';
@@ -523,7 +584,6 @@
         container.appendChild(cell);
       }
 
-      // Tanggal bulan aktif (1, 2, 3...)
       const today = new Date();
       for (let i = 1; i <= totalDays; i++) {
         const cell = document.createElement('div');
@@ -559,6 +619,7 @@
       document.getElementById('start-menu').classList.remove('open');
       document.getElementById('calendar-popup').classList.remove('open');
       document.getElementById('control-panel-modal').classList.remove('open');
+      document.getElementById('notepad-window').classList.remove('open');
     }
 
     function handleGlobalClick() {
@@ -566,7 +627,7 @@
       playStartupOnce();
     }
 
-    // Jam Digital Realtime
+    // Jam Realtime
     function updateTime() {
       const now = new Date();
       document.getElementById('tray-clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -588,7 +649,6 @@
       snd.play().catch(() => {});
     }
 
-    // Inisialisasi Pertama
     window.onload = () => {
       renderDesktopAndMenu();
       playSound();
