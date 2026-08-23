@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows XP Professional - Web OS v5</title>
+  <title>Windows XP Professional - Web OS v6</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   
   <style>
@@ -86,9 +86,9 @@
 
     #start-btn {
       height: 30px;
-      width: 100px;
-      background: linear-gradient(to bottom, #388e3c 0%, #4caf50 15%, #2e7d32 85%, #1b5e20 100%);
-      border-radius: 0 12px 12px 0;
+      width: 110px;
+      background: linear-gradient(to bottom, #388e3c 0%, #52b256 12%, #2e7d32 85%, #1b5e20 100%);
+      border-radius: 0 14px 14px 0;
       box-shadow: 2px 0 5px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
@@ -100,6 +100,7 @@
       font-size: 14px;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
       cursor: pointer;
+      border-right: 1px solid #144017;
     }
     #start-btn:hover { filter: brightness(1.1); }
 
@@ -188,29 +189,112 @@
     .cal-cell.today { background: #245edb; color: white; font-weight: bold; }
     .cal-cell.empty { color: #ccc; }
 
-    /* Jendela Notepad XP */
-    #notepad-window {
-      position: fixed; top: 80px; left: 100px; width: 450px; height: 300px;
-      background: #ECE9D8; border: 3px solid #0055ea; border-radius: 6px;
-      display: none; flex-direction: column; z-index: 15000; box-shadow: 2px 2px 15px rgba(0,0,0,0.4);
+    /* Gaya Jendela Aplikasi Klasik XP (Draggable) */
+    .xp-window {
+      position: fixed;
+      background: #ECE9D8;
+      border: 3px solid #0055ea;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 3px 3px 15px rgba(0,0,0,0.5);
+      touch-action: none;
     }
-    #notepad-window.open { display: flex; }
-    .win-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 4px 8px; font-weight: bold; font-size: 12px; display: flex; justify-content: space-between; cursor: move; }
-    .win-body { flex: 1; padding: 5px; display: flex; flex-direction: column; }
-    .notepad-textarea { flex: 1; resize: none; border: 1px solid #7f9db9; padding: 5px; font-family: monospace; font-size: 13px; outline: none; }
+    .xp-window.open { display: flex; }
 
-    /* Control Panel Modal */
-    #control-panel-modal {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 90%; max-width: 520px; max-height: 85vh; background: #ECE9D8; border: 3px solid #0055ea;
-      border-radius: 6px; display: none; flex-direction: column; z-index: 20000; box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    .win-header {
+      background: linear-gradient(to bottom, #0058ee 0%, #3a81f7 4%, #0058ee 10%, #003dd7 100%);
+      color: white;
+      padding: 4px 6px 4px 8px;
+      font-weight: bold;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
     }
-    #control-panel-modal.open { display: flex; }
-    .cp-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 6px 10px; font-weight: bold; display: flex; justify-content: space-between; }
-    .cp-body { padding: 12px; overflow-y: auto; flex: 1; font-size: 12px; }
-    .cp-row { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
-    .cp-row input, .cp-row select { padding: 5px; border: 1px solid #7f9db9; border-radius: 2px; font-size: 12px; }
-    .btn-xp { background: linear-gradient(#f0f0f0, #e0e0e0); border: 1px solid #7f9db9; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; font-size: 12px; }
+
+    .win-title-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .win-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .win-btn {
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(to bottom, #f0f0f0 0%, #dfdfdf 100%);
+      border: 1px solid #7f9db9;
+      border-radius: 2px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .win-btn:hover { filter: brightness(1.1); }
+    .win-btn.close-btn {
+      background: linear-gradient(to bottom, #e81123 0%, #b30d1a 100%);
+      border-color: #8c0a13;
+      color: white;
+    }
+
+    .win-menu-bar {
+      background: #ECE9D8;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-bottom: 1px solid #d4d0c8;
+      display: flex;
+      gap: 12px;
+      color: #000;
+    }
+    .win-menu-bar span { cursor: pointer; padding: 1px 4px; border-radius: 2px; }
+    .win-menu-bar span:hover { background: #2f71cd; color: white; }
+
+    .win-body {
+      flex: 1;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      background: #ECE9D8;
+    }
+
+    /* Ukuran spesifik jendela */
+    #notepad-window {
+      top: 100px; left: 120px; width: 450px; height: 320px; z-index: 15000;
+    }
+    .notepad-textarea {
+      flex: 1; resize: none; border: 1px solid #7f9db9; padding: 5px;
+      font-family: monospace; font-size: 12px; outline: none; background: #fff;
+    }
+
+    #control-panel-modal {
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 90%; max-width: 520px; max-height: 85vh; z-index: 20000;
+    }
+    .cp-body { padding: 10px; overflow-y: auto; flex: 1; font-size: 11px; }
+    .cp-row { margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
+    .cp-row input, .cp-row select { padding: 4px; border: 1px solid #7f9db9; border-radius: 2px; font-size: 11px; }
+    
+    .btn-xp {
+      background: linear-gradient(#f0f0f0, #e0e0e0);
+      border: 1px solid #7f9db9;
+      padding: 4px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 11px;
+    }
     .btn-xp:hover { background: linear-gradient(#e5f4fb, #c8e5fc); border-color: #3c7fb1; }
 
     /* Shutdown Screen */
@@ -286,11 +370,21 @@
     <div class="cal-grid" id="cal-days-container" style="margin-top: 4px;"></div>
   </div>
 
-  <!-- Jendela Notepad -->
-  <div id="notepad-window" onclick="event.stopPropagation()">
-    <div class="win-header">
-      <span>Notepad - Catatan.txt</span>
-      <span style="cursor:pointer;" onclick="closeNotepad()">✕</span>
+  <!-- Jendela Notepad (Bisa Dipindah) -->
+  <div id="notepad-window" class="xp-window" onclick="event.stopPropagation()">
+    <div class="win-header" id="notepad-header">
+      <div class="win-title-left">
+        <i class="bi bi-journal-text" style="font-size: 13px;"></i>
+        <span>Notepad - Catatan.txt</span>
+      </div>
+      <div class="win-controls">
+        <div class="win-btn" onclick="alert('Di minimize')">_</div>
+        <div class="win-btn" onclick="alert('Di maximize')">□</div>
+        <div class="win-btn close-btn" onclick="closeNotepad()">✕</div>
+      </div>
+    </div>
+    <div class="win-menu-bar">
+      <span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span>
     </div>
     <div class="win-body">
       <textarea class="notepad-textarea" placeholder="Tulis catatan Anda di sini..."></textarea>
@@ -300,15 +394,22 @@
     </div>
   </div>
 
-  <!-- Control Panel -->
-  <div id="control-panel-modal" onclick="event.stopPropagation()">
-    <div class="cp-header">
-      <span>Control Panel - Pengaturan Menu & Sistem</span>
-      <span style="cursor:pointer;" onclick="closeControlPanel()">✕</span>
+  <!-- Control Panel (Bisa Dipindah) -->
+  <div id="control-panel-modal" class="xp-window" onclick="event.stopPropagation()">
+    <div class="win-header" id="cp-header">
+      <div class="win-title-left">
+        <i class="bi bi-gear-fill" style="font-size: 13px;"></i>
+        <span>Control Panel - Pengaturan Sistem</span>
+      </div>
+      <div class="win-controls">
+        <div class="win-btn" onclick="alert('Di minimize')">_</div>
+        <div class="win-btn" onclick="alert('Di maximize')">□</div>
+        <div class="win-btn close-btn" onclick="closeControlPanel()">✕</div>
+      </div>
     </div>
     <div class="cp-body">
-      <h3>Pengaturan Wallpaper</h3>
-      <div class="cp-row">
+      <b>Pengaturan Wallpaper</b>
+      <div class="cp-row" style="margin-top: 5px;">
         <label>Pilih Wallpaper Bawaan:</label>
         <select id="preset-wallpaper" onchange="changePresetWallpaper(this.value)">
           <option value="https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png">Windows XP Bliss (Hijau)</option>
@@ -321,10 +422,10 @@
         <label>Atau Upload Wallpaper dari Perangkat:</label>
         <input type="file" id="device-wallpaper" accept="image/*" onchange="uploadDeviceWallpaper(event)">
       </div>
-      <hr style="margin: 10px 0; border:0; border-top:1px solid #ccc;">
+      <hr style="margin: 8px 0; border:0; border-top:1px solid #ccc;">
       
-      <h3>Tambah Menu / Folder Baru</h3>
-      <div class="cp-row">
+      <b>Tambah Menu / Folder Baru</b>
+      <div class="cp-row" style="margin-top: 5px;">
         <label>Nama Menu / Folder:</label>
         <input type="text" id="new-menu-name" placeholder="Contoh: Laporan Keuangan">
       </div>
@@ -353,9 +454,9 @@
       </div>
       <button class="btn-xp" onclick="addNewMenu()">Tambah ke Desktop & Start Menu</button>
       
-      <hr style="margin: 10px 0; border:0; border-top:1px solid #ccc;">
-      <h3>Hapus Menu yang Ada</h3>
-      <div class="cp-row">
+      <hr style="margin: 8px 0; border:0; border-top:1px solid #ccc;">
+      <b>Hapus Menu yang Ada</b>
+      <div class="cp-row" style="margin-top: 5px;">
         <label>Pilih Menu untuk Dihapus:</label>
         <select id="delete-menu-select"></select>
         <button class="btn-xp" onclick="deleteSelectedMenu()" style="background: #ffebee; color: #c62828; margin-top:4px;">Hapus Menu Terpilih</button>
@@ -401,7 +502,6 @@
       { name: "Dashboard Checklist", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=dashboard-checklist-pm", icon: "bi-bar-chart-line-fill", color: "#283593", x: 105, y: 485 }
     ];
 
-    // Render Ulang Desktop Icons & Start Menu
     function renderDesktopAndMenu() {
       const desktop = document.getElementById('desktop');
       const oldIcons = desktop.querySelectorAll('.desktop-icon:not(#icon-notepad):not(#icon-cp)');
@@ -416,7 +516,6 @@
       deleteSelect.innerHTML = '';
 
       appMenus.forEach((item, index) => {
-        // Jika koordinat x,y belum ada, berikan nilai default otomatis
         if (item.x === undefined || item.y === undefined) {
           item.x = 375 + (Math.floor(index / 5) * 90);
           item.y = 15 + ((index % 5) * 95);
@@ -427,7 +526,6 @@
         el.style.top = `${item.y}px`;
         el.style.left = `${item.x}px`;
         
-        // Bedakan antara klik (buka link) dan geser (pindah posisi)
         let isMoved = false;
         el.onclick = () => {
           if (!isMoved) {
@@ -437,13 +535,9 @@
         };
 
         el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#fff'}"></i><span>${item.name}</span>`;
-        
-        // Terapkan fungsi geser dengan pelacak pergerakan
         makeDraggable(el, item, (moved) => { isMoved = moved; });
-        
         desktop.appendChild(el);
 
-        // Masukkan ke Start Menu
         const menuEl = document.createElement('div');
         menuEl.className = 'start-item';
         menuEl.onclick = () => {
@@ -466,9 +560,9 @@
       });
     }
 
-    // Sistem Drag & Drop yang Akurat & Responsif (Mouse & Sentuhan)
-    function makeDraggable(elmnt, itemData, onMoveStatus) {
-      let startX = 0, startY = 0, initialX = 0, initialY = 0;
+    // Fungsi Drag Universal (Untuk Ikon dan Jendela)
+    function makeDraggable(elmnt, itemDataObj, onMoveStatus) {
+      let initialX = 0, initialY = 0;
       let hasDragged = false;
 
       elmnt.addEventListener('pointerdown', pointerDown);
@@ -476,7 +570,7 @@
       function pointerDown(e) {
         e.preventDefault();
         hasDragged = false;
-        onMoveStatus(false);
+        if (onMoveStatus) onMoveStatus(false);
         initialX = e.clientX;
         initialY = e.clientY;
         
@@ -489,9 +583,9 @@
         let dx = e.clientX - initialX;
         let dy = e.clientY - initialY;
         
-        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
           hasDragged = true;
-          onMoveStatus(true);
+          if (onMoveStatus) onMoveStatus(true);
         }
 
         let newX = elmnt.offsetLeft + dx;
@@ -503,20 +597,21 @@
         elmnt.style.left = `${newX}px`;
         elmnt.style.top = `${newY}px`;
         
-        itemData.x = newX;
-        itemData.y = newY;
+        if (itemDataObj) {
+          itemDataObj.x = newX;
+          itemDataObj.y = newY;
+        }
       }
 
       function pointerUp(e) {
         elmnt.releasePointerCapture(e.pointerId);
         elmnt.removeEventListener('pointermove', pointerMove);
         elmnt.removeEventListener('pointerup', pointerUp);
-        // Reset status drag setelah jeda singkat agar klik tidak tereksekusi jika digeser
-        setTimeout(() => { onMoveStatus(false); }, 100);
+        setTimeout(() => { if (onMoveStatus) onMoveStatus(false); }, 100);
       }
     }
 
-    // Notepad & Control Panel
+    // Notepad & Control Panel Actions
     function openNotepad() {
       closeAllPopups();
       document.getElementById('notepad-window').classList.add('open');
@@ -560,7 +655,6 @@
         return;
       }
       
-      // Masukkan menu baru dengan posisi otomatis di layar desktop
       appMenus.push({ 
         name, 
         url, 
@@ -675,11 +769,13 @@
     }
 
     window.onload = () => {
-      // Buat icon sistem Notepad & Control Panel bisa digeser juga
-      let dummyNotepad = { x: 15, y: 15 };
-      let dummyCP = { x: 105, y: 15 };
-      makeDraggable(document.getElementById('icon-notepad'), dummyNotepad, () => {});
-      makeDraggable(document.getElementById('icon-cp'), dummyCP, () => {});
+      // Inisialisasi ikon utama desktop agar bisa digeser
+      makeDraggable(document.getElementById('icon-notepad'), null, null);
+      makeDraggable(document.getElementById('icon-cp'), null, null);
+
+      // Inisialisasi jendela agar bisa digeser lewat Title Bar-nya
+      makeDraggable(document.getElementById('notepad-window'), null, null);
+      makeDraggable(document.getElementById('control-panel-modal'), null, null);
 
       renderDesktopAndMenu();
       playSound();
