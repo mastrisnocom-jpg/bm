@@ -2,13 +2,307 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec">
-  <title>Mengarahkan...</title>
-  <script>
-    window.location.replace("https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec" + window.location.search);
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windows XP - Portal</title>
+  <!-- 98.css / XP style library -->
+  <link rel="stylesheet" href="https://unpkg.com/xp.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Tahoma", sans-serif;
+      /* Wallpaper Bliss Windows XP */
+      background: #0055ea url('https://upload.wikimedia.org/wikipedia/commons/2/21/Bliss_%28Windows_XP%29.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /* Area Desktop */
+    .desktop {
+      height: calc(100vh - 36px);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 20px;
+    }
+
+    /* Ikon Desktop */
+    .desktop-icon {
+      width: 76px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      color: white;
+      text-shadow: 1px 1px 2px #000;
+      padding: 6px 4px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .desktop-icon:hover {
+      background-color: rgba(49, 106, 197, 0.4);
+    }
+    .desktop-icon img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 4px;
+    }
+    .desktop-icon span {
+      font-size: 11px;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    /* Jendela Popup (Window) */
+    .window-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 480px;
+      display: none;
+      z-index: 100;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Taskbar Windows XP */
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 36px;
+      background: linear-gradient(180deg, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      border-top: 1px solid #3878f7;
+    }
+
+    /* Tombol Start */
+    .start-btn {
+      height: 36px;
+      padding: 0 16px 0 10px;
+      background: linear-gradient(180deg, #388e3c 0%, #4caf50 50%, #2e7d32 100%);
+      border: none;
+      border-radius: 0 10px 10px 0;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      font-style: italic;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: inset 1px 1px 0 rgba(255,255,255,0.4), 2px 0 5px rgba(0,0,0,0.3);
+    }
+    .start-btn:active {
+      background: linear-gradient(180deg, #2e7d32 0%, #388e3c 50%, #1b5e20 100%);
+    }
+
+    /* System Tray (Jam) */
+    .system-tray {
+      height: 100%;
+      padding: 0 12px;
+      background: linear-gradient(180deg, #0e8ef7 0%, #0c7cd5 100%);
+      border-left: 1px solid #144988;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 11px;
+    }
+
+    /* Start Menu Panel */
+    .start-menu {
+      position: fixed;
+      bottom: 36px;
+      left: 0;
+      width: 320px;
+      background: #ffffff;
+      border-radius: 6px 6px 0 0;
+      border: 2px solid #0055ea;
+      display: none;
+      flex-direction: column;
+      box-shadow: 4px 4px 15px rgba(0,0,0,0.4);
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .start-header {
+      background: linear-gradient(180deg, #245edb 0%, #1941a5 100%);
+      color: white;
+      padding: 10px 14px;
+      font-weight: bold;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .start-body {
+      display: flex;
+      background: #fff;
+    }
+    .start-left {
+      width: 100%;
+      padding: 8px;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      color: #000;
+      text-decoration: none;
+      font-size: 12px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .menu-item:hover {
+      background-color: #2f71cd;
+      color: white;
+    }
+    .menu-item img {
+      width: 24px;
+      height: 24px;
+    }
+  </style>
 </head>
 <body>
-  <p>Mengarahkan ke aplikasi... <a href="https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec">Klik di sini</a> jika tidak otomatis beralih.</p>
+
+  <!-- DESKTOP ICONS (Edit link & icon di sini) -->
+  <div class="desktop">
+    <!-- Link langsung ke Apps Script BMIS Portal -->
+    <a href="https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec" target="_blank" class="desktop-icon">
+      <img src="https://win98icons.alexmeub.com/icons/png/internet_connection_wiz-5.png" alt="BMIS">
+      <span>BMIS Portal</span>
+    </a>
+
+    <!-- Tombol Buka Menu Jendela Internal -->
+    <div class="desktop-icon" onclick="openWindow('myAppWindow')">
+      <img src="https://win98icons.alexmeub.com/icons/png/directory_open_cool-4.png" alt="Katalog">
+      <span>Daftar Menu</span>
+    </div>
+
+    <!-- Tambah link eksternal lain jika perlu -->
+    <a href="https://google.com" target="_blank" class="desktop-icon">
+      <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" alt="Internet">
+      <span>Browser</span>
+    </a>
+  </div>
+
+  <!-- JENDELA POPUP (Windows XP Style) -->
+  <div class="window-container" id="myAppWindow">
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-bar-text">Daftar Modul & Pintasan</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close" onclick="closeWindow('myAppWindow')"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <p style="margin-top: 0;">Silakan pilih aplikasi atau modul yang ingin dibuka:</p>
+        
+        <ul class="tree-view" style="max-height: 180px; overflow-y: auto;">
+          <li>
+            <strong>Building Management</strong>
+            <ul>
+              <li><a href="https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec" target="_blank">BMIS Portal (Google Apps Script)</a></li>
+              <li><a href="https://bm.bpb.my.id" target="_blank">Website Utama BPB</a></li>
+            </ul>
+          </li>
+          <li>
+            <strong>Pintasan Kerja</strong>
+            <ul>
+              <li><a href="https://docs.google.com/spreadsheets" target="_blank">Google Spreadsheet</a></li>
+              <li><a href="https://drive.google.com" target="_blank">Google Drive</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+          <button onclick="closeWindow('myAppWindow')">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- START MENU -->
+  <div class="start-menu" id="startMenu">
+    <div class="start-header">
+      <img src="https://win98icons.alexmeub.com/icons/png/user_world-0.png" width="24" height="24">
+      <span>Administrator</span>
+    </div>
+    <div class="start-body">
+      <div class="start-left">
+        <a class="menu-item" href="https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec" target="_blank">
+          <img src="https://win98icons.alexmeub.com/icons/png/application_hourglass_small-0.png">
+          <strong>BMIS Portal</strong>
+        </a>
+        <div class="menu-item" onclick="openWindow('myAppWindow'); toggleStartMenu();">
+          <img src="https://win98icons.alexmeub.com/icons/png/directory_open_cool-4.png">
+          <span>Semua Menu</span>
+        </div>
+        <hr>
+        <a class="menu-item" href="https://mail.google.com" target="_blank">
+          <img src="https://win98icons.alexmeub.com/icons/png/envelope_closed-0.png">
+          <span>Email Kerja</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div class="taskbar">
+    <button class="start-btn" onclick="toggleStartMenu()">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Windows_XP_logo.svg" width="16" height="16">
+      start
+    </button>
+    <div class="system-tray">
+      <span id="clock">12:00</span>
+    </div>
+  </div>
+
+  <script>
+    // Buka / Tutup Start Menu
+    function toggleStartMenu() {
+      const menu = document.getElementById('startMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Buka / Tutup Jendela Window
+    function openWindow(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+    function closeWindow(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    // Menutup Start Menu jika klik di area desktop
+    document.querySelector('.desktop').addEventListener('click', () => {
+      document.getElementById('startMenu').style.display = 'none';
+    });
+
+    // Jam Digital System Tray
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
 </body>
 </html>
