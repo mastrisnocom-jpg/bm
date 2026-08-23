@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows XP Professional</title>
+  <title>Windows XP Professional - Web OS</title>
+  <!-- Bootstrap Icons (Ribuan Pilihan Ikon) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   
   <style>
@@ -19,9 +20,10 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      background-color: #000;
     }
 
-    /* Wallpaper Asli Windows XP Bliss */
+    /* Wallpaper Asli Windows XP Bliss (Dapat Diganti via Control Panel) */
     #desktop {
       width: 100vw;
       height: calc(100vh - 30px);
@@ -29,17 +31,13 @@
       background-size: cover;
       position: relative;
       padding: 10px;
-      display: grid;
-      grid-template-rows: repeat(auto-fill, 75px);
-      grid-auto-flow: column;
-      grid-auto-columns: 80px;
-      gap: 15px;
     }
 
-    /* Icon Desktop XP */
+    /* Icon Desktop (Bisa Digeser / Drag & Drop) */
     .desktop-icon {
       width: 75px;
-      height: 70px;
+      height: 75px;
+      position: absolute;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -67,6 +65,7 @@
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      width: 100%;
     }
 
     /* Taskbar Windows XP */
@@ -84,7 +83,6 @@
       border-top: 1px solid #4889f5;
     }
 
-    /* Start Button Hijau Khas XP */
     #start-btn {
       height: 30px;
       width: 100px;
@@ -102,18 +100,9 @@
       text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
       cursor: pointer;
     }
-    #start-btn:hover {
-      filter: brightness(1.1);
-    }
+    #start-btn:hover { filter: brightness(1.1); }
 
-    .taskbar-apps {
-      flex: 1;
-      display: flex;
-      padding-left: 8px;
-      gap: 5px;
-    }
-
-    /* System Tray Biru Khas XP */
+    /* System Tray */
     #system-tray {
       height: 100%;
       background: linear-gradient(to bottom, #0c82dc 0%, #159df5 10%, #0d79cc 90%, #055a9e 100%);
@@ -124,23 +113,10 @@
       gap: 8px;
       color: white;
       font-size: 11px;
-      box-shadow: inset 1px 0 2px rgba(0,0,0,0.3);
     }
-
-    .tray-icons {
-      display: flex;
-      gap: 6px;
-      font-size: 13px;
-    }
-
-    #tray-clock {
-      cursor: pointer;
-      padding: 2px 4px;
-      border-radius: 2px;
-    }
-    #tray-clock:hover {
-      background: rgba(255,255,255,0.2);
-    }
+    .tray-icons { display: flex; gap: 6px; font-size: 13px; }
+    #tray-clock { cursor: pointer; padding: 2px 4px; border-radius: 2px; }
+    #tray-clock:hover { background: rgba(255,255,255,0.2); }
 
     /* Start Menu XP 2-Kolom */
     #start-menu {
@@ -158,11 +134,8 @@
       border: 1px solid #0055ea;
       overflow: hidden;
     }
-    #start-menu.open {
-      display: flex;
-    }
+    #start-menu.open { display: flex; }
 
-    /* Start Menu Header */
     .start-user {
       height: 52px;
       background: linear-gradient(to bottom, #1d5ad6 0%, #2f79ee 100%);
@@ -177,200 +150,93 @@
       border-bottom: 2px solid #e58d17;
     }
     .start-user-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 4px;
-      border: 2px solid #fff;
-      background: #ffaa00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
+      width: 34px; height: 34px; border-radius: 4px; border: 2px solid #fff;
+      background: #ffaa00; display: flex; align-items: center; justify-content: center; font-size: 18px;
     }
 
-    /* Start Menu Body */
-    .start-body {
-      flex: 1;
-      display: flex;
-      background: #d3e5fa;
-    }
-    .start-left {
-      width: 50%;
-      background: #ffffff;
-      padding: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      overflow-y: auto;
-    }
-    .start-right {
-      width: 50%;
-      background: #d3e5fa;
-      padding: 6px;
-      border-left: 1px solid #9bbde7;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      overflow-y: auto;
-    }
+    .start-body { flex: 1; display: flex; background: #d3e5fa; }
+    .start-left { width: 50%; background: #ffffff; padding: 6px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+    .start-right { width: 50%; background: #d3e5fa; padding: 6px; border-left: 1px solid #9bbde7; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
 
     .start-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 6px;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 11px;
-      color: #333;
-      text-decoration: none;
+      display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 2px;
+      cursor: pointer; font-size: 11px; color: #333; text-decoration: none;
     }
-    .start-item:hover {
-      background: #2f71cd;
-      color: white !important;
-    }
-    .start-item:hover span {
-      color: white !important;
-    }
-    .start-item i {
-      font-size: 16px;
-      min-width: 18px;
-      text-align: center;
-    }
-    .start-item .bold-text {
-      font-weight: bold;
-      display: block;
-      color: #000;
-    }
+    .start-item:hover { background: #2f71cd; color: white !important; }
+    .start-item:hover span { color: white !important; }
+    .start-item i { font-size: 16px; min-width: 18px; text-align: center; }
 
-    /* Start Menu Footer */
     .start-footer {
-      height: 40px;
-      background: linear-gradient(to bottom, #3878e4 0%, #1f5ed8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 0 10px;
-      gap: 10px;
-      border-top: 1px solid #5a93ee;
+      height: 40px; background: linear-gradient(to bottom, #3878e4 0%, #1f5ed8 100%);
+      display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; gap: 10px; border-top: 1px solid #5a93ee;
     }
-    .footer-btn {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      color: white;
-      font-size: 11px;
-      cursor: pointer;
-      padding: 3px 6px;
-    }
-    .footer-btn:hover {
-      background: rgba(255,255,255,0.2);
-      border-radius: 3px;
-    }
+    .footer-btn { display: flex; align-items: center; gap: 5px; color: white; font-size: 11px; cursor: pointer; padding: 3px 6px; }
+    .footer-btn:hover { background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-    /* Jendela Pop-up XP */
-    .xp-window {
-      position: absolute;
-      top: 40px;
-      left: 80px;
-      width: 880px;
-      height: 520px;
-      background: #ECE9D8;
-      border: 3px solid #0055ea;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-      z-index: 100;
-    }
-    .xp-titlebar {
-      height: 26px;
-      background: linear-gradient(to bottom, #0058ee 0%, #3593ff 4%, #288eff 6%, #0058ee 8%, #003dd7 100%);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 6px;
-      color: white;
-      font-weight: bold;
-      font-size: 12px;
-      text-shadow: 1px 1px 1px #000;
-    }
-    .xp-controls {
-      display: flex;
-      gap: 3px;
-    }
-    .xp-btn {
-      width: 18px;
-      height: 18px;
-      border: 1px solid #fff;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-    }
-    .xp-btn.min { background: linear-gradient(#2a6be8, #0b45b2); }
-    .xp-btn.max { background: linear-gradient(#2a6be8, #0b45b2); }
-    .xp-btn.close { background: linear-gradient(#e05338, #b02409); }
-
-    .xp-body {
-      flex: 1;
-      background: #fff;
-      position: relative;
-    }
-    .xp-body iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    /* Pop-up Kalender Jam */
+    /* Kalender Matriks 1, 2, 3... */
     #calendar-popup {
-      position: fixed;
-      bottom: 35px;
-      right: 5px;
-      width: 240px;
-      background: #fff;
-      border: 1px solid #0055ea;
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      display: none;
-      flex-direction: column;
-      padding: 10px;
-      z-index: 10001;
-      font-size: 12px;
+      position: fixed; bottom: 35px; right: 5px; width: 280px; background: #fff;
+      border: 1px solid #0055ea; border-radius: 4px; box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      display: none; flex-direction: column; padding: 12px; z-index: 10001; font-size: 12px;
     }
-    #calendar-popup.open {
-      display: flex;
+    #calendar-popup.open { display: flex; }
+    .cal-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 8px; color: #1941a5; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+    .cal-day-name { font-weight: bold; color: #666; font-size: 10px; padding: 2px 0; }
+    .cal-cell { padding: 5px 0; cursor: pointer; border-radius: 2px; }
+    .cal-cell:hover { background: #d3e5fa; }
+    .cal-cell.today { background: #245edb; color: white; font-weight: bold; }
+    .cal-cell.empty { color: #ccc; }
+
+    /* Shutdown Screen */
+    #shutdown-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #0000aa; z-index: 99999; display: none;
+      flex-direction: column; align-items: center; justify-content: center; color: white;
     }
-    .cal-header {
-      background: #245edb;
-      color: white;
-      text-align: center;
-      padding: 4px;
-      font-weight: bold;
-      border-radius: 2px;
-      margin-bottom: 8px;
+    #shutdown-screen.active { display: flex; }
+
+    /* Control Panel Modal */
+    #control-panel-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 550px; height: 480px; background: #ECE9D8; border: 3px solid #0055ea;
+      border-radius: 6px; display: none; flex-direction: column; z-index: 20000; box-shadow: 0 0 25px rgba(0,0,0,0.6);
     }
+    #control-panel-modal.open { display: flex; }
+    .cp-header { background: linear-gradient(to bottom, #0058ee, #003dd7); color: white; padding: 6px 10px; font-weight: bold; display: flex; justify-content: space-between; }
+    .cp-body { padding: 15px; overflow-y: auto; flex: 1; font-size: 12px; }
+    .cp-row { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .cp-row input, .cp-row select { padding: 5px; border: 1px solid #7f9db9; border-radius: 2px; }
+    .btn-xp { background: linear-gradient(#f0f0f0, #e0e0e0); border: 1px solid #7f9db9; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
+    .btn-xp:hover { background: linear-gradient(#e5f4fb, #c8e5fc); border-color: #3c7fb1; }
   </style>
 </head>
 <body onclick="handleGlobalClick()">
 
-  <!-- Suara Startup Asli Windows XP -->
+  <!-- Suara Startup Windows XP -->
   <audio id="xp-startup" preload="auto">
     <source src="https://www.myinstants.com/media/sounds/windows-xp-startup.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Area Desktop Bliss -->
+  <!-- Layar Shutdown -->
+  <div id="shutdown-screen">
+    <i class="bi bi-power" style="font-size: 64px; margin-bottom: 15px; color: #ff4444;"></i>
+    <h2>Windows is shutting down...</h2>
+    <p style="margin-top: 10px; font-size: 13px; color: #aaa;">Anda dapat menutup tab ini atau memuat ulang halaman untuk menyalakan kembali.</p>
+  </div>
+
+  <!-- Area Desktop -->
   <div id="desktop">
-    <!-- Recycle Bin Asli -->
-    <div class="desktop-icon" style="position: absolute; right: 15px; bottom: 45px;" ondblclick="alert('Recycle Bin Kosong')">
-      <i class="bi bi-trash3-fill" style="color: #4da6ff;"></i>
-      <span>Recycle Bin</span>
+    <!-- Icon Akses Folder/File Lokal -->
+    <div class="desktop-icon" style="top: 20px; left: 20px;" ondblclick="openLocalFileExplorer()">
+      <i class="bi bi-folder-fill" style="color: #ffca28;"></i>
+      <span>File Explorer</span>
+    </div>
+
+    <!-- Icon Control Panel -->
+    <div class="desktop-icon" style="top: 110px; left: 20px;" ondblclick="openControlPanel()">
+      <i class="bi bi-gear-fill" style="color: #42a5f5;"></i>
+      <span>Control Panel</span>
     </div>
   </div>
 
@@ -378,29 +244,87 @@
   <div id="start-menu" onclick="event.stopPropagation()">
     <div class="start-user">
       <div class="start-user-avatar"><i class="bi bi-person-fill"></i></div>
-      <span>Administrator</span>
+      <span>Administrator (Pro)</span>
     </div>
     
     <div class="start-body">
-      <!-- Kolom Kiri -->
       <div class="start-left" id="start-left-list"></div>
-      <!-- Kolom Kanan -->
       <div class="start-right" id="start-right-list"></div>
     </div>
 
     <div class="start-footer">
-      <div class="footer-btn" onclick="playSound()"><i class="bi bi-key-fill" style="color:#f2aa00;"></i> Log Off</div>
-      <div class="footer-btn" onclick="alert('Shutting Down Windows...')"><i class="bi bi-power" style="color:#d83b01;"></i> Turn Off Computer</div>
+      <div class="footer-btn" onclick="openControlPanel()"><i class="bi bi-gear" style="color:#fff;"></i> Control Panel</div>
+      <div class="footer-btn" onclick="triggerShutdown()"><i class="bi bi-power" style="color:#ffcccc;"></i> Turn Off</div>
     </div>
   </div>
 
-  <!-- Kalender Popup Samping Jam -->
+  <!-- Kalender Popup Matriks (1, 2, 3...) -->
   <div id="calendar-popup" onclick="event.stopPropagation()">
-    <div class="cal-header" id="cal-date-title">Date & Time</div>
-    <div style="text-align: center; margin: 5px 0;">
-      <b id="cal-time-big" style="font-size: 18px; color: #1941a5;"></b>
+    <div class="cal-header">
+      <span id="cal-month-year">Bulan Tahun</span>
+      <div>
+        <button class="btn-xp" onclick="changeMonth(-1)">‹</button>
+        <button class="btn-xp" onclick="changeMonth(1)">›</button>
+      </div>
     </div>
-    <div style="text-align: center; color: #555;" id="cal-full-date"></div>
+    <div class="cal-grid">
+      <div class="cal-day-name">Min</div>
+      <div class="cal-day-name">Sen</div>
+      <div class="cal-day-name">Sel</div>
+      <div class="cal-day-name">Rab</div>
+      <div class="cal-day-name">Kam</div>
+      <div class="cal-day-name">Jum</div>
+      <div class="cal-day-name">Sab</div>
+    </div>
+    <div class="cal-grid" id="cal-days-container" style="margin-top: 4px;"></div>
+  </div>
+
+  <!-- Control Panel untuk Pengaturan Menu & Kustomisasi -->
+  <div id="control-panel-modal" onclick="event.stopPropagation()">
+    <div class="cp-header">
+      <span>Control Panel - Pengaturan Menu & Sistem</span>
+      <span style="cursor:pointer;" onclick="closeControlPanel()">✕</span>
+    </div>
+    <div class="cp-body">
+      <h3>Pengaturan Wallpaper</h3>
+      <div class="cp-row">
+        <label>URL Gambar Wallpaper Desktop:</label>
+        <input type="text" id="input-wallpaper" value="https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png">
+        <button class="btn-xp" onclick="updateWallpaper()">Terapkan Wallpaper</button>
+      </div>
+      <hr style="margin: 15px 0; border:0; border-top:1px solid #ccc;">
+      
+      <h3>Tambah Menu / Aplikasi Baru</h3>
+      <div class="cp-row">
+        <label>Nama Menu:</label>
+        <input type="text" id="new-menu-name" placeholder="Contoh: Laporan Keuangan">
+      </div>
+      <div class="cp-row">
+        <label>Link Tujuan (URL Asli Google Apps Script / Web):</label>
+        <input type="text" id="new-menu-url" placeholder="https://script.google.com/...">
+      </div>
+      <div class="cp-row">
+        <label>Pilih Ikon (Bootstrap Icon Name):</label>
+        <select id="new-menu-icon">
+          <option value="bi-app-indicator">Default App</option>
+          <option value="bi-house-door-fill">Home / Beranda</option>
+          <option value="bi-speedometer2">Dashboard</option>
+          <option value="bi-exclamation-triangle-fill">Kerusakan / Warning</option>
+          <option value="bi-calendar-check-fill">Jadwal / Kalender</option>
+          <option value="bi-sun-fill">PLTS / Energi</option>
+          <option value="bi-lightning-charge-fill">Listrik / Energi</option>
+          <option value="bi-file-earmark-check-fill">BAST / Dokumen</option>
+          <option value="bi-cash-coin">Keuangan / ATM</option>
+          <option value="bi-ui-checks">Checklist Harian</option>
+          <option value="bi-bar-chart-line-fill">Grafik / Statistik</option>
+          <option value="bi-cpu-fill">Sistem / CPU</option>
+          <option value="bi-folder2-open">Folder Dokumen</option>
+          <option value="bi-shield-check">Keamanan</option>
+          <option value="bi-tools">Peralatan / Tools</option>
+        </select>
+      </div>
+      <button class="btn-xp" onclick="addNewMenu()" style="margin-top: 5px;">Simpan & Tambah Menu</button>
+    </div>
   </div>
 
   <!-- Taskbar -->
@@ -410,32 +334,29 @@
       <span>start</span>
     </div>
 
-    <div class="taskbar-apps" id="taskbar-opened-apps"></div>
+    <div style="flex:1;"></div>
 
     <!-- Notification Tray -->
     <div id="system-tray">
       <div class="tray-icons">
-        <i class="bi bi-shield-fill-check" style="color: #ffcc00;" title="Windows Security Alerts"></i>
+        <i class="bi bi-arrows-fullscreen" title="Full Screen" onclick="toggleFullScreen()"></i>
+        <i class="bi bi-folder2-open" title="Akses File/Folder Lokal" onclick="openLocalFileExplorer()"></i>
         <i class="bi bi-volume-up-fill" title="Volume" onclick="playSound()"></i>
-        <i class="bi bi-usb-drive-fill" title="Safely Remove Hardware"></i>
       </div>
       <div id="tray-clock" onclick="toggleCalendar(event)">12:00 PM</div>
     </div>
   </div>
 
   <script>
-    // 14 Menu yang Diinput
-    const leftMenus = [
+    // Data Default 14 Menu Utama Anda
+    let appMenus = [
       { name: "Index / Beranda", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=index", icon: "bi-house-door-fill", color: "#1976d2" },
       { name: "Dashboard Utama", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=dashboard", icon: "bi-speedometer2", color: "#e65100" },
       { name: "Input Kerusakan", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=kerusakan", icon: "bi-exclamation-triangle-fill", color: "#c62828" },
       { name: "Jadwal Kerusakan", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=jadwal-kerusakan", icon: "bi-calendar-x-fill", color: "#ad1457" },
       { name: "PLTS Dashboard", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=plts-dashboard", icon: "bi-sun-fill", color: "#f57f17" },
       { name: "Energi Dashboard", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=energi-dashboard", icon: "bi-lightning-charge-fill", color: "#2e7d32" },
-      { name: "BAST Form", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=bast", icon: "bi-file-earmark-check-fill", color: "#00695c" }
-    ];
-
-    const rightMenus = [
+      { name: "BAST Form", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=bast", icon: "bi-file-earmark-check-fill", color: "#00695c" },
       { name: "Dashboard BAST", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=dashboard-bast", icon: "bi-card-checklist", color: "#00838f" },
       { name: "Dashboard ATM", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=dashboard-atm", icon: "bi-cash-coin", color: "#4527a0" },
       { name: "Perencanaan PM", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=perencanaan-pm", icon: "bi-calendar2-range-fill", color: "#1565c0" },
@@ -445,105 +366,199 @@
       { name: "Dashboard Checklist", url: "https://script.google.com/macros/s/AKfycbwBnM-oi29uwN1lQjBk7ad-nNIhRSAngNty2TVxnjyDwZkO3UC5315skPv06vnvXh8zbw/exec?page=dashboard-checklist-pm", icon: "bi-bar-chart-line-fill", color: "#283593" }
     ];
 
-    const allMenus = [...leftMenus, ...rightMenus];
+    // Render Ulang Desktop Icons & Start Menu
+    function renderDesktopAndMenu() {
+      const desktop = document.getElementById('desktop');
+      // Hapus icon lama kecuali file explorer & control panel
+      const oldIcons = desktop.querySelectorAll('.desktop-icon:not(:nth-child(1)):not(:nth-child(2))');
+      oldIcons.forEach(el => el.remove());
 
-    // Render Desktop Icons
-    const desktop = document.getElementById('desktop');
-    allMenus.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'desktop-icon';
-      el.ondblclick = () => openWindow(item);
-      el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color}"></i><span>${item.name}</span>`;
-      desktop.appendChild(el);
-    });
+      const leftList = document.getElementById('start-left-list');
+      const rightList = document.getElementById('start-right-list');
+      leftList.innerHTML = '';
+      rightList.innerHTML = '';
 
-    // Render Start Menu
-    const leftList = document.getElementById('start-left-list');
-    leftMenus.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'start-item';
-      el.onclick = () => { openWindow(item); closeAllPopups(); };
-      el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color}"></i><span class="bold-text">${item.name}</span>`;
-      leftList.appendChild(el);
-    });
+      let startX = 110, startY = 20;
 
-    const rightList = document.getElementById('start-right-list');
-    rightMenus.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'start-item';
-      el.onclick = () => { openWindow(item); closeAllPopups(); };
-      el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color}"></i><span><b>${item.name}</b></span>`;
-      rightList.appendChild(el);
-    });
+      appMenus.forEach((item, index) => {
+        // Buat Icon Desktop dengan posisi grid otomatis
+        const el = document.createElement('div');
+        el.className = 'desktop-icon';
+        el.style.top = `${startY}px`;
+        el.style.left = `${startX}px`;
+        el.ondblclick = () => window.open(item.url, '_blank'); // Buka link asli tanpa iframe
+        el.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#fff'}"></i><span>${item.name}</span>`;
+        
+        // Fitur Drag & Drop icon dipindah-pindah
+        makeDraggable(el);
+        desktop.appendChild(el);
 
-    // Window Management
-    let winZ = 100;
-    function openWindow(app) {
-      winZ++;
-      const id = 'win_' + Math.random().toString(36).substr(2, 7);
-      const win = document.createElement('div');
-      win.className = 'xp-window';
-      win.id = id;
-      win.style.zIndex = winZ;
-      win.style.top = `${50 + (winZ % 8) * 20}px`;
-      win.style.left = `${60 + (winZ % 8) * 20}px`;
+        startY += 85;
+        if (startY > window.innerHeight - 120) {
+          startY = 20;
+          startX += 90;
+        }
 
-      win.innerHTML = `
-        <div class="xp-titlebar">
-          <div style="display:flex; align-items:center; gap:5px;">
-            <i class="bi ${app.icon}"></i> <span>${app.name}</span>
-          </div>
-          <div class="xp-controls">
-            <div class="xp-btn min" onclick="minimizeWin('${id}')">_</div>
-            <div class="xp-btn max" onclick="maximizeWin('${id}')">□</div>
-            <div class="xp-btn close" onclick="closeWin('${id}')">✕</div>
-          </div>
-        </div>
-        <div class="xp-body">
-          <iframe src="${app.url}"></iframe>
-        </div>
-        <div style="background:#f0f0f0; padding:3px 8px; font-size:11px; display:flex; justify-content:flex-end; border-top:1px solid #ccc;">
-          <a href="${app.url}" target="_blank" style="color:#0055ea; text-decoration:none;">Buka Link Eksternal ↗</a>
-        </div>
-      `;
-
-      win.onmousedown = () => { win.style.zIndex = ++winZ; };
-      document.body.appendChild(win);
+        // Masukkan ke Start Menu (Dibagi 2 kolom)
+        const menuEl = document.createElement('div');
+        menuEl.className = 'start-item';
+        menuEl.onclick = () => { window.open(item.url, '_blank'); closeAllPopups(); };
+        menuEl.innerHTML = `<i class="bi ${item.icon}" style="color:${item.color || '#333'}"></i><span><b>${item.name}</b></span>`;
+        
+        if (index < Math.ceil(appMenus.length / 2)) {
+          leftList.appendChild(menuEl);
+        } else {
+          rightList.appendChild(menuEl);
+        }
+      });
     }
 
-    function closeWin(id) { document.getElementById(id)?.remove(); }
-    function minimizeWin(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
-    function maximizeWin(id) {
-      const el = document.getElementById(id);
-      if (el.style.width === '100vw') {
-        el.style.width = '880px';
-        el.style.height = '520px';
-        el.style.top = '40px';
-        el.style.left = '80px';
-      } else {
-        el.style.width = '100vw';
-        el.style.height = 'calc(100vh - 30px)';
-        el.style.top = '0';
-        el.style.left = '0';
+    // Fungsi Drag and Drop Icon Desktop
+    function makeDraggable(elmnt) {
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      elmnt.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
       }
     }
 
-    // Toggle & Popups
+    // Akses Folder atau File Perangkat (Lokal HP / Desktop)
+    function openLocalFileExplorer() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.onchange = e => {
+        const files = e.target.files;
+        let fileNames = Array.from(files).map(f => f.name).join('\n');
+        alert(`Berhasil mengakses file perangkat:\n${fileNames}`);
+      };
+      input.click();
+    }
+
+    // Kontrol Layar Penuh (Full Screen)
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Tombol Shutdown
+    function triggerShutdown() {
+      closeAllPopups();
+      document.getElementById('shutdown-screen').classList.add('active');
+    }
+
+    // Control Panel Handlers
+    function openControlPanel() {
+      closeAllPopups();
+      document.getElementById('control-panel-modal').classList.add('open');
+    }
+    function closeControlPanel() {
+      document.getElementById('control-panel-modal').classList.remove('open');
+    }
+    function updateWallpaper() {
+      const url = document.getElementById('input-wallpaper').value;
+      document.getElementById('desktop').style.background = `url('${url}') no-repeat center center fixed`;
+      document.getElementById('desktop').style.backgroundSize = 'cover';
+      alert('Wallpaper berhasil diubah!');
+    }
+    function addNewMenu() {
+      const name = document.getElementById('new-menu-name').value;
+      const url = document.getElementById('new-menu-url').value;
+      const icon = document.getElementById('new-menu-icon').value;
+      if (!name || !url) {
+        alert('Nama dan URL menu wajib diisi!');
+        return;
+      }
+      appMenus.push({ name, url, icon, color: '#0055ea' });
+      renderDesktopAndMenu();
+      closeControlPanel();
+      alert('Menu baru berhasil ditambahkan ke Desktop & Start Menu!');
+    }
+
+    // Kalender Matriks Penuh (1, 2, 3...)
+    let currentCalDate = new Date();
+    function renderCalendar() {
+      const year = currentCalDate.getFullYear();
+      const month = currentCalDate.getMonth();
+      const monthsName = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      document.getElementById('cal-month-year').innerText = `${monthsName[month]} ${year}`;
+
+      const container = document.getElementById('cal-days-container');
+      container.innerHTML = '';
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const prevTotalDays = new Date(year, month, 0).getDate();
+
+      // Tanggal bulan sebelumnya
+      for (let i = firstDayIndex; i > 0; i--) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell empty';
+        cell.innerText = prevTotalDays - i + 1;
+        container.appendChild(cell);
+      }
+
+      // Tanggal bulan aktif (1, 2, 3...)
+      const today = new Date();
+      for (let i = 1; i <= totalDays; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          cell.classList.add('today');
+        }
+        cell.innerText = i;
+        container.appendChild(cell);
+      }
+    }
+
+    function changeMonth(dir) {
+      currentCalDate.setMonth(currentCalDate.getMonth() + dir);
+      renderCalendar();
+    }
+
+    function toggleCalendar(e) {
+      e.stopPropagation();
+      document.getElementById('start-menu').classList.remove('open');
+      const cal = document.getElementById('calendar-popup');
+      cal.classList.toggle('open');
+      if (cal.classList.contains('open')) renderCalendar();
+    }
+
     function toggleStartMenu(e) {
       e.stopPropagation();
       document.getElementById('calendar-popup').classList.remove('open');
       document.getElementById('start-menu').classList.toggle('open');
     }
 
-    function toggleCalendar(e) {
-      e.stopPropagation();
-      document.getElementById('start-menu').classList.remove('open');
-      document.getElementById('calendar-popup').classList.toggle('open');
-    }
-
     function closeAllPopups() {
       document.getElementById('start-menu').classList.remove('open');
       document.getElementById('calendar-popup').classList.remove('open');
+      document.getElementById('control-panel-modal').classList.remove('open');
     }
 
     function handleGlobalClick() {
@@ -551,19 +566,15 @@
       playStartupOnce();
     }
 
-    // Jam & Kalender
+    // Jam Digital Realtime
     function updateTime() {
       const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('tray-clock').innerText = timeStr;
-      document.getElementById('cal-time-big').innerText = now.toLocaleTimeString();
-      document.getElementById('cal-full-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      document.getElementById('cal-date-title').innerText = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+      document.getElementById('tray-clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-    // Sound Engine
+    // Sound Startup XP
     let played = false;
     function playStartupOnce() {
       if (!played) {
@@ -576,6 +587,12 @@
       snd.currentTime = 0;
       snd.play().catch(() => {});
     }
+
+    // Inisialisasi Pertama
+    window.onload = () => {
+      renderDesktopAndMenu();
+      playSound();
+    };
   </script>
 </body>
 </html>
