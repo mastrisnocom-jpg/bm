@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Maintenance Fasilitas</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans antialiased pb-12">
+
+  <!-- Navbar / Header -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <i data-lucide="wrench" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Form Maintenance</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Inspeksi & Pemeliharaan Fasilitas</p>
+        </div>
+      </div>
+      <!-- Theme Toggle Button -->
+      <button id="themeToggle" type="button" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all">
+        <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Container Utama -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
+    <form id="maintenanceForm" class="space-y-6">
+      
+      <!-- Kartu Waktu & Informasi Otomatis -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
+        <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-semibold mb-4 text-sm tracking-wide uppercase">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Waktu Inspeksi (Otomatis)</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Hari</label>
+            <input type="text" id="hari" readonly class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tanggal, Bulan & Tahun</label>
+            <input type="text" id="tanggalLengkap" readonly class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-not-allowed">
+          </div>
+        </div>
+      </div>
+
+      <!-- Kartu Detail Ruangan & Peralatan -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60 space-y-5">
+        <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">
+          <i data-lucide="building-2" class="w-4 h-4"></i>
+          <span>Detail Unit & Peralatan</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label for="lokasiKantor" class="block text-sm font-semibold mb-2">Lokasi Kantor / Cabang <span class="text-rose-500">*</span></label>
+            <input type="text" id="lokasiKantor" required placeholder="Contoh: Kantor Cabang Utama / Gd. A Lt. 3" class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+          </div>
+          <div>
+            <label for="namaAlat" class="block text-sm font-semibold mb-2">Nama Alat / Ruangan <span class="text-rose-500">*</span></label>
+            <input type="text" id="namaAlat" required placeholder="Contoh: AC Cassette Ruang Server / Panel SDP" class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+          </div>
+        </div>
+
+        <!-- Kondisi (Centang Pilihan) -->
+        <div>
+          <label class="block text-sm font-semibold mb-3">Status / Kondisi Alat <span class="text-rose-500">*</span></label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
+              <input type="radio" name="kondisi" value="Normal" class="hidden" checked>
+              <span>Normal / Baik</span>
+            </label>
+            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
+              <input type="radio" name="kondisi" value="Perlu Perbaikan" class="hidden">
+              <span>Perlu Perbaikan</span>
+            </label>
+            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
+              <input type="radio" name="kondisi" value="Rusak Ringan" class="hidden">
+              <span>Rusak Ringan</span>
+            </label>
+            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
+              <input type="radio" name="kondisi" value="Rusak Total" class="hidden">
+              <span>Rusak Total</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="catatan" class="block text-sm font-semibold mb-2">Catatan Tambahan (Opsional)</label>
+          <textarea id="catatan" rows="2" placeholder="Tuliskan keterangan perbaikan atau temuan khusus..." class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"></textarea>
+        </div>
+      </div>
+
+      <!-- Dokumentasi Foto (Sebelum & Sesudah) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Foto Sebelum -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i> Foto SEBELUM
+            </span>
+            <span class="text-xs text-slate-400">Bisa banyak foto</span>
+          </div>
+
+          <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer bg-slate-50/50 dark:bg-slate-900/30 transition text-center">
+            <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-600 dark:text-emerald-400 mb-2"></i>
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">Pilih Foto Sebelum</span>
+            <span class="text-[11px] text-slate-400 mt-1">Otomatis kompres ~100KB per foto</span>
+            <input type="file" id="inputSebelum" multiple accept="image/*" class="hidden">
+          </label>
+
+          <!-- Preview Grid -->
+          <div id="previewSebelum" class="grid grid-cols-3 gap-2 mt-4"></div>
+        </div>
+
+        <!-- Foto Sesudah -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <i data-lucide="image-check" class="w-4 h-4 text-emerald-600"></i> Foto SESUDAH
+            </span>
+            <span class="text-xs text-slate-400">Bisa banyak foto</span>
+          </div>
+
+          <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer bg-slate-50/50 dark:bg-slate-900/30 transition text-center">
+            <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-600 dark:text-emerald-400 mb-2"></i>
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">Pilih Foto Sesudah</span>
+            <span class="text-[11px] text-slate-400 mt-1">Otomatis kompres ~100KB per foto</span>
+            <input type="file" id="inputSesudah" multiple accept="image/*" class="hidden">
+          </label>
+
+          <!-- Preview Grid -->
+          <div id="previewSesudah" class="grid grid-cols-3 gap-2 mt-4"></div>
+        </div>
+      </div>
+
+      <!-- Tombol Simpan Laporan -->
+      <button type="submit" id="submitBtn" class="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition duration-200">
+        <i data-lucide="send" class="w-4 h-4"></i>
+        <span>Kirim Laporan Maintenance</span>
+      </button>
+
+      <!-- Status Notifikasi -->
+      <div id="statusNotif" class="hidden p-4 rounded-xl text-sm font-medium text-center transition"></div>
+    </form>
+  </main>
+
+  <script>
+    // --- 1. KONFIGURASI SUPABASE ---
+    // Ganti nilai di bawah ini dengan Project URL & Anon Key Supabase Anda
+    const SUPABASE_URL = "https://fmlotqntqxbmsvivvgnw.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtbG90cW50cXhibXN2aXZ2Z253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2Mjk0NTEsImV4cCI6MjEwMjIwNTQ1MX0.kSP0KlAYiDEqG9CdQ9vT7MiiGluxBqgBGH5SCC55bdU";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- 2. THEME TOGGLE (DARK / LIGHT) ---
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    themeToggleBtn.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    });
+
+    // --- 3. SET HARI, TANGGAL, BULAN & TAHUN OTOMATIS ---
+    const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const now = new Date();
+
+    document.getElementById('hari').value = namaHari[now.getDay()];
+    document.getElementById('tanggalLengkap').value = `${now.getDate()} ${namaBulan[now.getMonth()]} ${now.getFullYear()}`;
+
+    // --- 4. ALGORITMA CERDAS KOMPRESI FOTO KE ~100KB DENGAN KUALITAS JELAS ---
+    async function compressImageToTarget(file, targetKB = 100) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            // Batasi dimensi maksimal 1280px agar pas di layar tanpa kehilangan detail tajam
+            const maxDim = 1280;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Kompresi iteratif untuk mendekati ukuran target 100KB
+            let quality = 0.85;
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+            while (Math.round((dataUrl.length * 3) / 4 / 1024) > targetKB && quality > 0.3) {
+              quality -= 0.08;
+              dataUrl = canvas.toDataURL('image/jpeg', quality);
+            }
+
+            // Ubah Base64 kembali menjadi Blob
+            const byteString = atob(dataUrl.split(',')[1]);
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: 'image/jpeg' });
+            resolve({ blob, dataUrl, sizeKB: Math.round(blob.size / 1024) });
+          };
+        };
+      });
+    }
+
+    // --- 5. MANAGEMENT FILE STATE & PREVIEW ---
+    let filesSebelum = [];
+    let filesSesudah = [];
+
+    function handleFileSelection(event, listTarget, previewContainerId) {
+      const selectedFiles = Array.from(event.target.files);
+      const container = document.getElementById(previewContainerId);
+
+      selectedFiles.forEach(async (file) => {
+        const compressed = await compressImageToTarget(file, 100);
+        listTarget.push(compressed.blob);
+
+        // Render Kartu Preview
+        const card = document.createElement('div');
+        card.className = "relative group rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900";
+        card.innerHTML = `
+          <img src="${compressed.dataUrl}" class="w-full h-20 object-cover">
+          <span class="absolute bottom-1 right-1 bg-black/60 text-[10px] text-white px-1.5 py-0.5 rounded">${compressed.sizeKB} KB</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('inputSebelum').addEventListener('change', (e) => {
+      handleFileSelection(e, filesSebelum, 'previewSebelum');
+    });
+
+    document.getElementById('inputSesudah').addEventListener('change', (e) => {
+      handleFileSelection(e, filesSesudah, 'previewSesudah');
+    });
+
+    // --- 6. UPLOAD KE SUPABASE STORAGE ---
+    async function uploadFilesToBucket(files, folder) {
+      const urls = [];
+      for (const blob of files) {
+        const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+        const { data, error } = await supabaseClient.storage
+          .from('maintenance-photos')
+          .upload(fileName, blob, { contentType: 'image/jpeg' });
+
+        if (error) throw error;
+
+        // Ambil Public URL
+        const { data: publicData } = supabaseClient.storage
+          .from('maintenance-photos')
+          .getPublicUrl(fileName);
+
+        urls.push(publicData.publicUrl);
+      }
+      return urls;
+    }
+
+    // --- 7. SUBMIT FORM & SIMPAN KE DATABASE ---
+    const form = document.getElementById('maintenanceForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const notif = document.getElementById('statusNotif');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // UI Loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <span>Mengunggah & Menyimpan...</span>
+      `;
+
+      try {
+        // Upload foto sebelum & sesudah
+        const urlsSebelum = await uploadFilesToBucket(filesSebelum, 'sebelum');
+        const urlsSesudah = await uploadFilesToBucket(filesSesudah, 'sesudah');
+
+        // Ambil data form
+        const isoDate = new Date().toISOString().split('T')[0];
+        const payload = {
+          hari: document.getElementById('hari').value,
+          tanggal: isoDate,
+          lokasi_kantor: document.getElementById('lokasiKantor').value,
+          nama_alat_ruangan: document.getElementById('namaAlat').value,
+          kondisi: document.querySelector('input[name="kondisi"]:checked').value,
+          foto_sebelum: urlsSebelum,
+          foto_sesudah: urlsSesudah,
+          catatan: document.getElementById('catatan').value
+        };
+
+        // Simpan ke Supabase Table
+        const { error: insertError } = await supabaseClient
+          .from('laporan_maintenance')
+          .insert([payload]);
+
+        if (insertError) throw insertError;
+
+        // Notifikasi Sukses
+        notif.className = "p-4 rounded-xl text-sm font-medium text-center bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 block";
+        notif.innerText = "✓ Laporan dan foto berhasil disimpan ke Supabase!";
+        form.reset();
+        document.getElementById('previewSebelum').innerHTML = '';
+        document.getElementById('previewSesudah').innerHTML = '';
+        filesSebelum = [];
+        filesSesudah = [];
+
+      } catch (err) {
+        console.error(err);
+        notif.className = "p-4 rounded-xl text-sm font-medium text-center bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-300 dark:border-rose-800 block";
+        notif.innerText = "Gagal menyimpan data: " + err.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Kirim Laporan Maintenance</span>`;
+        lucide.createIcons();
+      }
+    });
+
+    // Inisialisasi ikon
+    lucide.createIcons();
+  </script>
+</body>
+</html>
