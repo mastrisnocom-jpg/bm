@@ -2,8 +2,16 @@
 <html lang="id" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laporan Maintenance Fasilitas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#059669">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Maintenance Facility</title>
+
+  <!-- PWA Manifest Inline Data URL -->
+  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22Maintenance%20App%22%2C%22short_name%22%3A%22Maintenance%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23059669%22%7D">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -26,164 +34,262 @@
       }
     }
   </script>
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Lucide Icons CDN -->
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Hilangkan tap highlight biru default Android */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea {
+      user-select: text;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans antialiased pb-12">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <!-- Navbar / Header -->
-  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+  <!-- Android Top App Bar -->
+  <header class="sticky top-0 z-40 bg-emerald-700 text-white shadow-md select-none">
+    <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-          <i data-lucide="wrench" class="w-5 h-5"></i>
-        </div>
+        <i data-lucide="wrench" class="w-5 h-5 text-emerald-200"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white">Form Maintenance</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Inspeksi & Pemeliharaan Fasilitas</p>
+          <h1 class="font-bold text-base tracking-wide leading-tight">Teknisi Facility</h1>
+          <p class="text-[10px] text-emerald-200">Offline Local Storage</p>
         </div>
       </div>
-      <!-- Theme Toggle Button -->
-      <button id="themeToggle" type="button" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all">
-        <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
-      </button>
+      <div class="flex items-center space-x-1">
+        <button id="themeToggle" type="button" class="p-2 rounded-full hover:bg-emerald-800 active:bg-emerald-900 transition">
+          <i id="themeIcon" data-lucide="moon" class="w-5 h-5 text-emerald-100"></i>
+        </button>
+        <button id="btnExport" type="button" class="p-2 rounded-full hover:bg-emerald-800 active:bg-emerald-900 transition" title="Export Data">
+          <i data-lucide="download" class="w-5 h-5 text-emerald-100"></i>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Container Utama -->
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
-    <form id="maintenanceForm" class="space-y-6">
-      
-      <!-- Kartu Waktu & Informasi Otomatis -->
-      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
-        <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-semibold mb-4 text-sm tracking-wide uppercase">
-          <i data-lucide="clock" class="w-4 h-4"></i>
-          <span>Waktu Inspeksi (Otomatis)</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Hari</label>
-            <input type="text" id="hari" readonly class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-not-allowed">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tanggal, Bulan & Tahun</label>
-            <input type="text" id="tanggalLengkap" readonly class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-not-allowed">
-          </div>
-        </div>
-      </div>
-
-      <!-- Kartu Detail Ruangan & Peralatan -->
-      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60 space-y-5">
-        <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">
-          <i data-lucide="building-2" class="w-4 h-4"></i>
-          <span>Detail Unit & Peralatan</span>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label for="lokasiKantor" class="block text-sm font-semibold mb-2">Lokasi Kantor / Cabang <span class="text-rose-500">*</span></label>
-            <input type="text" id="lokasiKantor" required placeholder="Contoh: Kantor Cabang Utama / Gd. A Lt. 3" class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
-          </div>
-          <div>
-            <label for="namaAlat" class="block text-sm font-semibold mb-2">Nama Alat / Ruangan <span class="text-rose-500">*</span></label>
-            <input type="text" id="namaAlat" required placeholder="Contoh: AC Cassette Ruang Server / Panel SDP" class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
-          </div>
-        </div>
-
-        <!-- Kondisi (Centang Pilihan) -->
-        <div>
-          <label class="block text-sm font-semibold mb-3">Status / Kondisi Alat <span class="text-rose-500">*</span></label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
-              <input type="radio" name="kondisi" value="Normal" class="hidden" checked>
-              <span>Normal / Baik</span>
-            </label>
-            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
-              <input type="radio" name="kondisi" value="Perlu Perbaikan" class="hidden">
-              <span>Perlu Perbaikan</span>
-            </label>
-            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
-              <input type="radio" name="kondisi" value="Rusak Ringan" class="hidden">
-              <span>Rusak Ringan</span>
-            </label>
-            <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-500 transition has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/40 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-700 dark:has-[:checked]:text-emerald-400 font-medium text-sm">
-              <input type="radio" name="kondisi" value="Rusak Total" class="hidden">
-              <span>Rusak Total</span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label for="catatan" class="block text-sm font-semibold mb-2">Catatan Tambahan (Opsional)</label>
-          <textarea id="catatan" rows="2" placeholder="Tuliskan keterangan perbaikan atau temuan khusus..." class="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"></textarea>
-        </div>
-      </div>
-
-      <!-- Dokumentasi Foto (Sebelum & Sesudah) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Kontainer Aplikasi Android (Mobile-Centric Container) -->
+  <main class="flex-1 max-w-md w-full mx-auto pb-24 px-4 pt-3 space-y-4">
+    
+    <!-- TAB 1: FORM INPUT (DEFAULT ACTIVE) -->
+    <section id="tabForm" class="space-y-4">
+      <form id="maintenanceForm" class="space-y-4">
         
-        <!-- Foto Sebelum -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i> Foto SEBELUM
-            </span>
-            <span class="text-xs text-slate-400">Bisa banyak foto</span>
+        <!-- Card: Tanggal & Waktu Otomatis -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Waktu Inspeksi</p>
+              <div class="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100">
+                <span id="hariBadge"></span>, <span id="tglBadge"></span>
+              </div>
+            </div>
+          </div>
+          <span class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full">Auto</span>
+        </div>
+
+        <!-- Card: Detail Unit & Ruangan -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3.5">
+          <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            <span>Unit / Lokasi Alat</span>
           </div>
 
-          <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer bg-slate-50/50 dark:bg-slate-900/30 transition text-center">
-            <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-600 dark:text-emerald-400 mb-2"></i>
-            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">Pilih Foto Sebelum</span>
-            <span class="text-[11px] text-slate-400 mt-1">Otomatis kompres ~100KB per foto</span>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Lokasi Kantor / Cabang *</label>
+            <input type="text" id="lokasiKantor" required placeholder="Contoh: KC Surabaya / Gedung Utama" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Nama Alat / Ruangan *</label>
+            <input type="text" id="namaAlat" required placeholder="Contoh: AC Split R. Server / Panel SDP" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
+          </div>
+
+          <!-- Opsi Kondisi (Chips Style Android) -->
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Status Kondisi *</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="cursor-pointer border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl flex items-center justify-center gap-2 has-[:checked]:bg-emerald-600 has-[:checked]:text-white has-[:checked]:border-emerald-600 transition text-xs font-semibold">
+                <input type="radio" name="kondisi" value="Normal" class="hidden" checked>
+                <span>✓ Normal</span>
+              </label>
+              <label class="cursor-pointer border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl flex items-center justify-center gap-2 has-[:checked]:bg-amber-600 has-[:checked]:text-white has-[:checked]:border-amber-600 transition text-xs font-semibold">
+                <input type="radio" name="kondisi" value="Perlu Perbaikan" class="hidden">
+                <span>⚠ Perlu Dicek</span>
+              </label>
+              <label class="cursor-pointer border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl flex items-center justify-center gap-2 has-[:checked]:bg-orange-600 has-[:checked]:text-white has-[:checked]:border-orange-600 transition text-xs font-semibold">
+                <input type="radio" name="kondisi" value="Rusak Ringan" class="hidden">
+                <span>✕ Rusak Ringan</span>
+              </label>
+              <label class="cursor-pointer border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl flex items-center justify-center gap-2 has-[:checked]:bg-rose-600 has-[:checked]:text-white has-[:checked]:border-rose-600 transition text-xs font-semibold">
+                <input type="radio" name="kondisi" value="Rusak Total" class="hidden">
+                <span>⛔ Rusak Total</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Catatan Tambahan</label>
+            <textarea id="catatan" rows="2" placeholder="Catatan perbaikan atau temuan..." class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-emerald-500 transition"></textarea>
+          </div>
+        </div>
+
+        <!-- Card: Foto Sebelum -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+              <i data-lucide="camera" class="w-4 h-4 text-emerald-600"></i> FOTO SEBELUM
+            </span>
+            <span class="text-[10px] text-slate-400">Kompres ~100KB</span>
+          </div>
+          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-4 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-6 h-6 text-emerald-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Ambil / Pilih Foto</span>
             <input type="file" id="inputSebelum" multiple accept="image/*" class="hidden">
           </label>
-
-          <!-- Preview Grid -->
-          <div id="previewSebelum" class="grid grid-cols-3 gap-2 mt-4"></div>
+          <div id="previewSebelum" class="grid grid-cols-4 gap-1.5"></div>
         </div>
 
-        <!-- Foto Sesudah -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/60">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-              <i data-lucide="image-check" class="w-4 h-4 text-emerald-600"></i> Foto SESUDAH
+        <!-- Card: Foto Sesudah -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> FOTO SESUDAH
             </span>
-            <span class="text-xs text-slate-400">Bisa banyak foto</span>
+            <span class="text-[10px] text-slate-400">Kompres ~100KB</span>
           </div>
-
-          <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer bg-slate-50/50 dark:bg-slate-900/30 transition text-center">
-            <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-600 dark:text-emerald-400 mb-2"></i>
-            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">Pilih Foto Sesudah</span>
-            <span class="text-[11px] text-slate-400 mt-1">Otomatis kompres ~100KB per foto</span>
+          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-4 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-6 h-6 text-emerald-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Ambil / Pilih Foto</span>
             <input type="file" id="inputSesudah" multiple accept="image/*" class="hidden">
           </label>
+          <div id="previewSesudah" class="grid grid-cols-4 gap-1.5"></div>
+        </div>
 
-          <!-- Preview Grid -->
-          <div id="previewSesudah" class="grid grid-cols-3 gap-2 mt-4"></div>
+        <!-- Tombol Submit (Android Filled Button) -->
+        <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-2xl bg-emerald-600 active:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 transition duration-150">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Simpan Laporan</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- TAB 2: RIWAYAT LAPORAN (HIDDEN BY DEFAULT) -->
+    <section id="tabRiwayat" class="hidden space-y-3">
+      <div class="flex items-center justify-between pb-1">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Hasil Inspeksi</h2>
+        <button id="btnClearAll" type="button" class="text-[11px] text-rose-500 font-semibold active:underline">Hapus Semua</button>
+      </div>
+      <div id="daftarLaporan" class="space-y-3"></div>
+    </section>
+
+    <!-- TAB 3: PENGATURAN & INFORMASI APLIKASI -->
+    <section id="tabInfo" class="hidden space-y-3">
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 text-center space-y-3 shadow-sm">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mx-auto">
+          <i data-lucide="smartphone" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-base text-slate-800 dark:text-slate-100">Aplikasi Android Maintenance</h3>
+          <p class="text-xs text-slate-500">Versi Offline PWA v1.0.0</p>
+        </div>
+        <div class="text-left text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
+          <p>💡 <b>Jadikan Aplikasi di HP Android:</b></p>
+          <p>1. Buka halaman ini di Chrome Android.</p>
+          <p>2. Tekan titik 3 di pojok kanan atas browser.</p>
+          <p>3. Pilih <b>"Tambahkan ke Layar Utama" (Add to Home Screen)</b> atau <b>"Install App"</b>.</p>
         </div>
       </div>
+    </section>
 
-      <!-- Tombol Simpan Laporan -->
-      <button type="submit" id="submitBtn" class="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition duration-200">
-        <i data-lucide="send" class="w-4 h-4"></i>
-        <span>Kirim Laporan Maintenance</span>
-      </button>
-
-      <!-- Status Notifikasi -->
-      <div id="statusNotif" class="hidden p-4 rounded-xl text-sm font-medium text-center transition"></div>
-    </form>
+    <!-- Snackbar Notifikasi Android -->
+    <div id="snackbar" class="fixed bottom-20 left-4 right-4 max-w-md mx-auto z-50 transform translate-y-32 transition-transform duration-300 ease-out flex items-center justify-between px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-2xl">
+      <span id="snackbarMsg">Notifikasi</span>
+      <button onclick="hideSnackbar()" class="text-emerald-400 font-bold ml-2">TUTUP</button>
+    </div>
   </main>
 
-  <script>
-    // --- 1. KONFIGURASI SUPABASE ---
-    // Ganti nilai di bawah ini dengan Project URL & Anon Key Supabase Anda
-    const SUPABASE_URL = "https://fmlotqntqxbmsvivvgnw.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtbG90cW50cXhibXN2aXZ2Z253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2Mjk0NTEsImV4cCI6MjEwMjIwNTQ1MX0.kSP0KlAYiDEqG9CdQ9vT7MiiGluxBqgBGH5SCC55bdU";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <!-- Android Bottom Navigation Bar (M3 Standard) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 select-none">
+    <div class="max-w-md mx-auto grid grid-cols-3 h-16">
+      
+      <!-- Nav Item 1: Form Input -->
+      <button id="navBtnForm" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-emerald-600 dark:text-emerald-400">
+        <div class="w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center transition">
+          <i data-lucide="edit-3" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[11px] font-bold">Input Form</span>
+      </button>
 
-    // --- 2. THEME TOGGLE (DARK / LIGHT) ---
+      <!-- Nav Item 2: Riwayat -->
+      <button id="navBtnRiwayat" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <div class="w-12 h-7 rounded-full flex items-center justify-center transition">
+          <i data-lucide="history" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[11px] font-medium">Riwayat</span>
+      </button>
+
+      <!-- Nav Item 3: Info App -->
+      <button id="navBtnInfo" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <div class="w-12 h-7 rounded-full flex items-center justify-center transition">
+          <i data-lucide="info" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[11px] font-medium">Panduan</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <script>
+    // --- 1. ANDROID BOTTOM NAVIGATION CONTROLLER ---
+    const tabForm = document.getElementById('tabForm');
+    const tabRiwayat = document.getElementById('tabRiwayat');
+    const tabInfo = document.getElementById('tabInfo');
+
+    const navBtnForm = document.getElementById('navBtnForm');
+    const navBtnRiwayat = document.getElementById('navBtnRiwayat');
+    const navBtnInfo = document.getElementById('navBtnInfo');
+
+    function switchTab(activeTab, activeBtn) {
+      [tabForm, tabRiwayat, tabInfo].forEach(t => t.classList.add('hidden'));
+      activeTab.classList.remove('hidden');
+
+      [navBtnForm, navBtnRiwayat, navBtnInfo].forEach(btn => {
+        btn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-slate-400";
+        btn.querySelector('div').className = "w-12 h-7 rounded-full flex items-center justify-center transition";
+        btn.querySelector('span').className = "text-[11px] font-medium";
+      });
+
+      activeBtn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-emerald-600 dark:text-emerald-400";
+      activeBtn.querySelector('div').className = "w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center transition";
+      activeBtn.querySelector('span').className = "text-[11px] font-bold";
+      lucide.createIcons();
+    }
+
+    navBtnForm.addEventListener('click', () => switchTab(tabForm, navBtnForm));
+    navBtnRiwayat.addEventListener('click', () => {
+      switchTab(tabRiwayat, navBtnRiwayat);
+      muatRiwayat();
+    });
+    navBtnInfo.addEventListener('click', () => switchTab(tabInfo, navBtnInfo));
+
+    // --- 2. ANDROID SNACKBAR NOTIFICATION ---
+    function showSnackbar(msg) {
+      const bar = document.getElementById('snackbar');
+      document.getElementById('snackbarMsg').innerText = msg;
+      bar.classList.remove('translate-y-32');
+      setTimeout(hideSnackbar, 3500);
+    }
+    function hideSnackbar() {
+      document.getElementById('snackbar').classList.add('translate-y-32');
+    }
+
+    // --- 3. THEME TOGGLE (DARK / LIGHT) ---
     const themeToggleBtn = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const html = document.documentElement;
@@ -195,183 +301,254 @@
       lucide.createIcons();
     });
 
-    // --- 3. SET HARI, TANGGAL, BULAN & TAHUN OTOMATIS ---
-    const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    const now = new Date();
+    // --- 4. SET HARI & TANGGAL OTOMATIS ---
+    const listHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const listBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+    const today = new Date();
 
-    document.getElementById('hari').value = namaHari[now.getDay()];
-    document.getElementById('tanggalLengkap').value = `${now.getDate()} ${namaBulan[now.getMonth()]} ${now.getFullYear()}`;
+    function setWaktu() {
+      document.getElementById('hariBadge').innerText = listHari[today.getDay()];
+      document.getElementById('tglBadge').innerText = `${today.getDate()} ${listBulan[today.getMonth()]} ${today.getFullYear()}`;
+    }
+    setWaktu();
 
-    // --- 4. ALGORITMA CERDAS KOMPRESI FOTO KE ~100KB DENGAN KUALITAS JELAS ---
-    async function compressImageToTarget(file, targetKB = 100) {
+    // --- 5. COMPRESS FOTO KE ~100KB DENGAN CANVAS NATIVE ---
+    async function compressTo100KB(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = (event) => {
+        reader.onload = (e) => {
           const img = new Image();
-          img.src = event.target.result;
+          img.src = e.target.result;
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
+            let w = img.width;
+            let h = img.height;
+            const maxDimension = 1080;
 
-            // Batasi dimensi maksimal 1280px agar pas di layar tanpa kehilangan detail tajam
-            const maxDim = 1280;
-            if (width > maxDim || height > maxDim) {
-              if (width > height) {
-                height = Math.round((height * maxDim) / width);
-                width = maxDim;
+            if (w > maxDimension || h > maxDimension) {
+              if (w > h) {
+                h = Math.round((h * maxDimension) / w);
+                w = maxDimension;
               } else {
-                width = Math.round((width * maxDim) / height);
-                height = maxDim;
+                w = Math.round((w * maxDimension) / h);
+                h = maxDimension;
               }
             }
 
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = w;
+            canvas.height = h;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+            ctx.drawImage(img, 0, 0, w, h);
 
-            // Kompresi iteratif untuk mendekati ukuran target 100KB
             let quality = 0.85;
             let dataUrl = canvas.toDataURL('image/jpeg', quality);
 
-            while (Math.round((dataUrl.length * 3) / 4 / 1024) > targetKB && quality > 0.3) {
+            while (Math.round((dataUrl.length * 3) / 4 / 1024) > 105 && quality > 0.25) {
               quality -= 0.08;
               dataUrl = canvas.toDataURL('image/jpeg', quality);
             }
 
-            // Ubah Base64 kembali menjadi Blob
-            const byteString = atob(dataUrl.split(',')[1]);
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-              ia[i] = byteString.charCodeAt(i);
-            }
-            const blob = new Blob([ab], { type: 'image/jpeg' });
-            resolve({ blob, dataUrl, sizeKB: Math.round(blob.size / 1024) });
+            const sizeKB = Math.round((dataUrl.length * 3) / 4 / 1024);
+            resolve({ dataUrl, sizeKB });
           };
         };
       });
     }
 
-    // --- 5. MANAGEMENT FILE STATE & PREVIEW ---
-    let filesSebelum = [];
-    let filesSesudah = [];
+    // --- 6. FILE STATE & PREVIEWS ---
+    let listSebelum = [];
+    let listSesudah = [];
 
-    function handleFileSelection(event, listTarget, previewContainerId) {
-      const selectedFiles = Array.from(event.target.files);
-      const container = document.getElementById(previewContainerId);
+    async function handleFileSelect(event, storeList, previewContainerId) {
+      const files = Array.from(event.target.files);
+      const previewContainer = document.getElementById(previewContainerId);
 
-      selectedFiles.forEach(async (file) => {
-        const compressed = await compressImageToTarget(file, 100);
-        listTarget.push(compressed.blob);
+      for (const file of files) {
+        const result = await compressTo100KB(file);
+        storeList.push(result.dataUrl);
 
-        // Render Kartu Preview
         const card = document.createElement('div');
-        card.className = "relative group rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900";
+        card.className = "relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shadow-sm";
         card.innerHTML = `
-          <img src="${compressed.dataUrl}" class="w-full h-20 object-cover">
-          <span class="absolute bottom-1 right-1 bg-black/60 text-[10px] text-white px-1.5 py-0.5 rounded">${compressed.sizeKB} KB</span>
+          <img src="${result.dataUrl}" class="w-full h-16 object-cover">
+          <span class="absolute bottom-0.5 right-0.5 bg-black/70 text-[8px] text-white font-medium px-1 py-0.2 rounded">${result.sizeKB}k</span>
         `;
-        container.appendChild(card);
-      });
+        previewContainer.appendChild(card);
+      }
     }
 
     document.getElementById('inputSebelum').addEventListener('change', (e) => {
-      handleFileSelection(e, filesSebelum, 'previewSebelum');
+      handleFileSelect(e, listSebelum, 'previewSebelum');
     });
 
     document.getElementById('inputSesudah').addEventListener('change', (e) => {
-      handleFileSelection(e, filesSesudah, 'previewSesudah');
+      handleFileSelect(e, listSesudah, 'previewSesudah');
     });
 
-    // --- 6. UPLOAD KE SUPABASE STORAGE ---
-    async function uploadFilesToBucket(files, folder) {
-      const urls = [];
-      for (const blob of files) {
-        const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-        const { data, error } = await supabaseClient.storage
-          .from('maintenance-photos')
-          .upload(fileName, blob, { contentType: 'image/jpeg' });
+    // --- 7. DATABASE INDEXEDDB (STORAGE LOCALHOST) ---
+    const DB_NAME = 'AndroidMaintenanceDB';
+    const STORE_NAME = 'laporan';
+    let db;
 
-        if (error) throw error;
-
-        // Ambil Public URL
-        const { data: publicData } = supabaseClient.storage
-          .from('maintenance-photos')
-          .getPublicUrl(fileName);
-
-        urls.push(publicData.publicUrl);
-      }
-      return urls;
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const instance = e.target.result;
+          if (!instance.objectStoreNames.contains(STORE_NAME)) {
+            instance.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        req.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+        req.onerror = (e) => reject(e);
+      });
     }
 
-    // --- 7. SUBMIT FORM & SIMPAN KE DATABASE ---
+    function simpanDB(data) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const req = tx.objectStore(STORE_NAME).add(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function ambilSemuaDB() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function hapusDB() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const req = tx.objectStore(STORE_NAME).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    // --- 8. SUBMIT FORM & SIMPAN KE DB ---
     const form = document.getElementById('maintenanceForm');
     const submitBtn = document.getElementById('submitBtn');
-    const notif = document.getElementById('statusNotif');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // UI Loading state
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `
-        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-        </svg>
-        <span>Mengunggah & Menyimpan...</span>
-      `;
+      submitBtn.innerHTML = `<span>Menyimpan...</span>`;
 
       try {
-        // Upload foto sebelum & sesudah
-        const urlsSebelum = await uploadFilesToBucket(filesSebelum, 'sebelum');
-        const urlsSesudah = await uploadFilesToBucket(filesSesudah, 'sesudah');
-
-        // Ambil data form
-        const isoDate = new Date().toISOString().split('T')[0];
         const payload = {
-          hari: document.getElementById('hari').value,
-          tanggal: isoDate,
+          created_at: new Date().toISOString(),
+          hari: document.getElementById('hariBadge').innerText,
+          tanggal: document.getElementById('tglBadge').innerText,
           lokasi_kantor: document.getElementById('lokasiKantor').value,
           nama_alat_ruangan: document.getElementById('namaAlat').value,
           kondisi: document.querySelector('input[name="kondisi"]:checked').value,
-          foto_sebelum: urlsSebelum,
-          foto_sesudah: urlsSesudah,
+          foto_sebelum: listSebelum,
+          foto_sesudah: listSesudah,
           catatan: document.getElementById('catatan').value
         };
 
-        // Simpan ke Supabase Table
-        const { error: insertError } = await supabaseClient
-          .from('laporan_maintenance')
-          .insert([payload]);
+        await simpanDB(payload);
+        showSnackbar("✓ Laporan berhasil disimpan!");
 
-        if (insertError) throw insertError;
-
-        // Notifikasi Sukses
-        notif.className = "p-4 rounded-xl text-sm font-medium text-center bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 block";
-        notif.innerText = "✓ Laporan dan foto berhasil disimpan ke Supabase!";
         form.reset();
         document.getElementById('previewSebelum').innerHTML = '';
         document.getElementById('previewSesudah').innerHTML = '';
-        filesSebelum = [];
-        filesSesudah = [];
-
+        listSebelum = [];
+        listSesudah = [];
       } catch (err) {
         console.error(err);
-        notif.className = "p-4 rounded-xl text-sm font-medium text-center bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-300 dark:border-rose-800 block";
-        notif.innerText = "Gagal menyimpan data: " + err.message;
+        showSnackbar("Gagal menyimpan data!");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Kirim Laporan Maintenance</span>`;
+        submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Simpan Laporan</span>`;
         lucide.createIcons();
       }
     });
 
-    // Inisialisasi ikon
+    // --- 9. RENDER RIWAYAT LAPORAN ---
+    async function muatRiwayat() {
+      const list = await ambilSemuaDB();
+      const container = document.getElementById('daftarLaporan');
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            Belum ada laporan inspeksi tersimpan.
+          </div>
+        `;
+        return;
+      }
+
+      list.reverse().forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5";
+        
+        const badgeColor = item.kondisi === 'Normal' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400';
+
+        let fotoSebelumHTML = item.foto_sebelum.map(url => `<img src="${url}" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700">`).join('');
+        let fotoSesudahHTML = item.foto_sesudah.map(url => `<img src="${url}" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700">`).join('');
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">${item.lokasi_kantor}</span>
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.nama_alat_ruangan}</h4>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColor}">${item.kondisi}</span>
+          </div>
+          <p class="text-[10px] text-slate-400">${item.hari}, ${item.tanggal}</p>
+          ${item.catatan ? `<p class="text-[11px] text-slate-600 dark:text-slate-300 italic bg-slate-50 dark:bg-slate-800 p-2 rounded-lg">"${item.catatan}"</p>` : ''}
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div>
+              <span class="text-[10px] text-slate-400 block mb-1">Sebelum (${item.foto_sebelum.length})</span>
+              <div class="flex flex-wrap gap-1">${fotoSebelumHTML || '<span class="text-[10px] text-slate-400 italic">Kosong</span>'}</div>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400 block mb-1">Sesudah (${item.foto_sesudah.length})</span>
+              <div class="flex flex-wrap gap-1">${fotoSesudahHTML || '<span class="text-[10px] text-slate-400 italic">Kosong</span>'}</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // --- 10. BACKUP DATA JSON & HAPUS ---
+    document.getElementById('btnExport').addEventListener('click', async () => {
+      const records = await ambilSemuaDB();
+      if (records.length === 0) {
+        showSnackbar("Belum ada data untuk diekspor!");
+        return;
+      }
+      const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `maintenance_backup_${Date.now()}.json`;
+      a.click();
+    });
+
+    document.getElementById('btnClearAll').addEventListener('click', async () => {
+      if (confirm("Hapus semua riwayat laporan di HP ini?")) {
+        await hapusDB();
+        await muatRiwayat();
+        showSnackbar("Semua riwayat berhasil dihapus.");
+      }
+    });
+
+    initDB();
     lucide.createIcons();
   </script>
 </body>
