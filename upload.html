@@ -6,10 +6,9 @@
   <meta name="theme-color" content="#059669">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Maintenance Facility</title>
 
-  <!-- PWA Manifest Inline Data URL -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22Maintenance%20App%22%2C%22short_name%22%3A%22Maintenance%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23059669%22%7D">
 
   <!-- Tailwind CSS CDN -->
@@ -36,48 +35,47 @@
   </script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML2PDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    /* Hilangkan tap highlight biru default Android */
-    * {
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    input, textarea {
-      user-select: text;
-    }
+    * { -webkit-tap-highlight-color: transparent; }
+    input, textarea { user-select: text; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <!-- Android Top App Bar -->
+  <!-- Top Bar Android -->
   <header class="sticky top-0 z-40 bg-emerald-700 text-white shadow-md select-none">
     <div class="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <i data-lucide="wrench" class="w-5 h-5 text-emerald-200"></i>
         <div>
           <h1 class="font-bold text-base tracking-wide leading-tight">Teknisi Facility</h1>
-          <p class="text-[10px] text-emerald-200">Offline Local Storage</p>
+          <p class="text-[10px] text-emerald-200">Offline Localhost App</p>
         </div>
       </div>
       <div class="flex items-center space-x-1">
-        <button id="themeToggle" type="button" class="p-2 rounded-full hover:bg-emerald-800 active:bg-emerald-900 transition">
+        <button id="themeToggle" type="button" class="p-2 rounded-full hover:bg-emerald-800 transition">
           <i id="themeIcon" data-lucide="moon" class="w-5 h-5 text-emerald-100"></i>
-        </button>
-        <button id="btnExport" type="button" class="p-2 rounded-full hover:bg-emerald-800 active:bg-emerald-900 transition" title="Export Data">
-          <i data-lucide="download" class="w-5 h-5 text-emerald-100"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Kontainer Aplikasi Android (Mobile-Centric Container) -->
+  <!-- Container Mobile -->
   <main class="flex-1 max-w-md w-full mx-auto pb-24 px-4 pt-3 space-y-4">
     
-    <!-- TAB 1: FORM INPUT (DEFAULT ACTIVE) -->
+    <!-- TAB 1: FORM INPUT / EDIT -->
     <section id="tabForm" class="space-y-4">
+      <div id="editAlert" class="hidden p-3 bg-amber-500 text-white rounded-xl text-xs font-semibold flex justify-between items-center shadow-sm">
+        <span>Mode Edit: Sedang mengubah laporan</span>
+        <button id="btnCancelEdit" type="button" class="underline font-bold text-[11px]">Batal</button>
+      </div>
+
       <form id="maintenanceForm" class="space-y-4">
-        
-        <!-- Card: Tanggal & Waktu Otomatis -->
+        <input type="hidden" id="editId" value="">
+
+        <!-- Waktu Otomatis -->
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 flex items-center justify-center">
@@ -93,7 +91,7 @@
           <span class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full">Auto</span>
         </div>
 
-        <!-- Card: Detail Unit & Ruangan -->
+        <!-- Detail Alat & Unit -->
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3.5">
           <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide">
             <i data-lucide="map-pin" class="w-4 h-4"></i>
@@ -102,15 +100,14 @@
 
           <div>
             <label class="block text-[11px] font-semibold text-slate-500 mb-1">Lokasi Kantor / Cabang *</label>
-            <input type="text" id="lokasiKantor" required placeholder="Contoh: KC Surabaya / Gedung Utama" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
+            <input type="text" id="lokasiKantor" required placeholder="Contoh: KC Surabaya / Gd. Utama Lt. 2" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold text-slate-500 mb-1">Nama Alat / Ruangan *</label>
-            <input type="text" id="namaAlat" required placeholder="Contoh: AC Split R. Server / Panel SDP" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
+            <input type="text" id="namaAlat" required placeholder="Contoh: AC Split Ruang Server / Panel SDP" class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition">
           </div>
 
-          <!-- Opsi Kondisi (Chips Style Android) -->
           <div>
             <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Status Kondisi *</label>
             <div class="grid grid-cols-2 gap-2">
@@ -134,52 +131,51 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Catatan Tambahan</label>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Catatan</label>
             <textarea id="catatan" rows="2" placeholder="Catatan perbaikan atau temuan..." class="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs outline-none focus:ring-2 focus:ring-emerald-500 transition"></textarea>
           </div>
         </div>
 
-        <!-- Card: Foto Sebelum -->
+        <!-- Foto Sebelum -->
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
               <i data-lucide="camera" class="w-4 h-4 text-emerald-600"></i> FOTO SEBELUM
             </span>
-            <span class="text-[10px] text-slate-400">Kompres ~100KB</span>
+            <span class="text-[10px] text-slate-400">Klik foto untuk perbesar</span>
           </div>
-          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-4 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
-            <i data-lucide="plus-circle" class="w-6 h-6 text-emerald-600 mb-1"></i>
-            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Ambil / Pilih Foto</span>
+          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-3 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Tambah Foto Sebelum</span>
             <input type="file" id="inputSebelum" multiple accept="image/*" class="hidden">
           </label>
           <div id="previewSebelum" class="grid grid-cols-4 gap-1.5"></div>
         </div>
 
-        <!-- Card: Foto Sesudah -->
+        <!-- Foto Sesudah -->
         <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
               <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> FOTO SESUDAH
             </span>
-            <span class="text-[10px] text-slate-400">Kompres ~100KB</span>
+            <span class="text-[10px] text-slate-400">Klik foto untuk perbesar</span>
           </div>
-          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-4 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
-            <i data-lucide="plus-circle" class="w-6 h-6 text-emerald-600 mb-1"></i>
-            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Ambil / Pilih Foto</span>
+          <label class="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 active:border-emerald-500 rounded-xl py-3 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Tambah Foto Sesudah</span>
             <input type="file" id="inputSesudah" multiple accept="image/*" class="hidden">
           </label>
           <div id="previewSesudah" class="grid grid-cols-4 gap-1.5"></div>
         </div>
 
-        <!-- Tombol Submit (Android Filled Button) -->
-        <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-2xl bg-emerald-600 active:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 transition duration-150">
+        <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-2xl bg-emerald-600 active:bg-emerald-800 text-white font-bold text-sm shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2 transition">
           <i data-lucide="save" class="w-4 h-4"></i>
-          <span>Simpan Laporan</span>
+          <span id="submitBtnText">Simpan Laporan</span>
         </button>
       </form>
     </section>
 
-    <!-- TAB 2: RIWAYAT LAPORAN (HIDDEN BY DEFAULT) -->
+    <!-- TAB 2: RIWAYAT LAPORAN -->
     <section id="tabRiwayat" class="hidden space-y-3">
       <div class="flex items-center justify-between pb-1">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Hasil Inspeksi</h2>
@@ -188,205 +184,67 @@
       <div id="daftarLaporan" class="space-y-3"></div>
     </section>
 
-    <!-- TAB 3: PENGATURAN & INFORMASI APLIKASI -->
+    <!-- TAB 3: PANDUAN / INFO -->
     <section id="tabInfo" class="hidden space-y-3">
       <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 text-center space-y-3 shadow-sm">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mx-auto">
-          <i data-lucide="smartphone" class="w-7 h-7"></i>
+        <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center mx-auto">
+          <i data-lucide="smartphone" class="w-6 h-6"></i>
         </div>
-        <div>
-          <h3 class="font-bold text-base text-slate-800 dark:text-slate-100">Aplikasi Android Maintenance</h3>
-          <p class="text-xs text-slate-500">Versi Offline PWA v1.0.0</p>
-        </div>
-        <div class="text-left text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
-          <p>💡 <b>Jadikan Aplikasi di HP Android:</b></p>
-          <p>1. Buka halaman ini di Chrome Android.</p>
-          <p>2. Tekan titik 3 di pojok kanan atas browser.</p>
-          <p>3. Pilih <b>"Tambahkan ke Layar Utama" (Add to Home Screen)</b> atau <b>"Install App"</b>.</p>
+        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Teknisi Facility PWA</h3>
+        <div class="text-left text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl">
+          <p>• <b>Export PDF</b>: Buka tab Riwayat lalu tekan ikon PDF pada laporan terkait.</p>
+          <p>• <b>View Foto</b>: Sentuh foto mana saja untuk melihat tampilan layar penuh.</p>
+          <p>• <b>Edit / Hapus</b>: Gunakan tombol Edit atau Sampah di setiap kartu riwayat.</p>
         </div>
       </div>
     </section>
 
-    <!-- Snackbar Notifikasi Android -->
-    <div id="snackbar" class="fixed bottom-20 left-4 right-4 max-w-md mx-auto z-50 transform translate-y-32 transition-transform duration-300 ease-out flex items-center justify-between px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-2xl">
+    <!-- Snackbar -->
+    <div id="snackbar" class="fixed bottom-20 left-4 right-4 max-w-md mx-auto z-50 transform translate-y-32 transition-transform duration-300 flex items-center justify-between px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-2xl">
       <span id="snackbarMsg">Notifikasi</span>
       <button onclick="hideSnackbar()" class="text-emerald-400 font-bold ml-2">TUTUP</button>
     </div>
   </main>
 
-  <!-- Android Bottom Navigation Bar (M3 Standard) -->
+  <!-- Modal Photo Viewer -->
+  <div id="photoViewerModal" class="fixed inset-0 z-50 bg-black/90 hidden flex flex-col justify-between p-4 backdrop-blur-sm">
+    <div class="flex justify-end">
+      <button id="btnCloseViewer" class="p-2 rounded-full bg-white/20 text-white hover:bg-white/30">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+    <div class="flex-1 flex items-center justify-center overflow-hidden">
+      <img id="viewerImage" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+    </div>
+    <p id="viewerCaption" class="text-center text-xs text-white/70 py-2 font-mono"></p>
+  </div>
+
+  <!-- Bottom Navigation Android -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 select-none">
     <div class="max-w-md mx-auto grid grid-cols-3 h-16">
-      
-      <!-- Nav Item 1: Form Input -->
       <button id="navBtnForm" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-emerald-600 dark:text-emerald-400">
-        <div class="w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center transition">
+        <div class="w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center">
           <i data-lucide="edit-3" class="w-4 h-4"></i>
         </div>
         <span class="text-[11px] font-bold">Input Form</span>
       </button>
-
-      <!-- Nav Item 2: Riwayat -->
-      <button id="navBtnRiwayat" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-        <div class="w-12 h-7 rounded-full flex items-center justify-center transition">
+      <button id="navBtnRiwayat" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <div class="w-12 h-7 rounded-full flex items-center justify-center">
           <i data-lucide="history" class="w-4 h-4"></i>
         </div>
         <span class="text-[11px] font-medium">Riwayat</span>
       </button>
-
-      <!-- Nav Item 3: Info App -->
-      <button id="navBtnInfo" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-        <div class="w-12 h-7 rounded-full flex items-center justify-center transition">
+      <button id="navBtnInfo" type="button" class="nav-item flex flex-col items-center justify-center space-y-1 text-slate-400">
+        <div class="w-12 h-7 rounded-full flex items-center justify-center">
           <i data-lucide="info" class="w-4 h-4"></i>
         </div>
         <span class="text-[11px] font-medium">Panduan</span>
       </button>
-
     </div>
   </nav>
 
   <script>
-    // --- 1. ANDROID BOTTOM NAVIGATION CONTROLLER ---
-    const tabForm = document.getElementById('tabForm');
-    const tabRiwayat = document.getElementById('tabRiwayat');
-    const tabInfo = document.getElementById('tabInfo');
-
-    const navBtnForm = document.getElementById('navBtnForm');
-    const navBtnRiwayat = document.getElementById('navBtnRiwayat');
-    const navBtnInfo = document.getElementById('navBtnInfo');
-
-    function switchTab(activeTab, activeBtn) {
-      [tabForm, tabRiwayat, tabInfo].forEach(t => t.classList.add('hidden'));
-      activeTab.classList.remove('hidden');
-
-      [navBtnForm, navBtnRiwayat, navBtnInfo].forEach(btn => {
-        btn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-slate-400";
-        btn.querySelector('div').className = "w-12 h-7 rounded-full flex items-center justify-center transition";
-        btn.querySelector('span').className = "text-[11px] font-medium";
-      });
-
-      activeBtn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-emerald-600 dark:text-emerald-400";
-      activeBtn.querySelector('div').className = "w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center transition";
-      activeBtn.querySelector('span').className = "text-[11px] font-bold";
-      lucide.createIcons();
-    }
-
-    navBtnForm.addEventListener('click', () => switchTab(tabForm, navBtnForm));
-    navBtnRiwayat.addEventListener('click', () => {
-      switchTab(tabRiwayat, navBtnRiwayat);
-      muatRiwayat();
-    });
-    navBtnInfo.addEventListener('click', () => switchTab(tabInfo, navBtnInfo));
-
-    // --- 2. ANDROID SNACKBAR NOTIFICATION ---
-    function showSnackbar(msg) {
-      const bar = document.getElementById('snackbar');
-      document.getElementById('snackbarMsg').innerText = msg;
-      bar.classList.remove('translate-y-32');
-      setTimeout(hideSnackbar, 3500);
-    }
-    function hideSnackbar() {
-      document.getElementById('snackbar').classList.add('translate-y-32');
-    }
-
-    // --- 3. THEME TOGGLE (DARK / LIGHT) ---
-    const themeToggleBtn = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    const html = document.documentElement;
-
-    themeToggleBtn.addEventListener('click', () => {
-      html.classList.toggle('dark');
-      const isDark = html.classList.contains('dark');
-      themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-      lucide.createIcons();
-    });
-
-    // --- 4. SET HARI & TANGGAL OTOMATIS ---
-    const listHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const listBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-    const today = new Date();
-
-    function setWaktu() {
-      document.getElementById('hariBadge').innerText = listHari[today.getDay()];
-      document.getElementById('tglBadge').innerText = `${today.getDate()} ${listBulan[today.getMonth()]} ${today.getFullYear()}`;
-    }
-    setWaktu();
-
-    // --- 5. COMPRESS FOTO KE ~100KB DENGAN CANVAS NATIVE ---
-    async function compressTo100KB(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-          const img = new Image();
-          img.src = e.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width;
-            let h = img.height;
-            const maxDimension = 1080;
-
-            if (w > maxDimension || h > maxDimension) {
-              if (w > h) {
-                h = Math.round((h * maxDimension) / w);
-                w = maxDimension;
-              } else {
-                w = Math.round((w * maxDimension) / h);
-                h = maxDimension;
-              }
-            }
-
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
-
-            let quality = 0.85;
-            let dataUrl = canvas.toDataURL('image/jpeg', quality);
-
-            while (Math.round((dataUrl.length * 3) / 4 / 1024) > 105 && quality > 0.25) {
-              quality -= 0.08;
-              dataUrl = canvas.toDataURL('image/jpeg', quality);
-            }
-
-            const sizeKB = Math.round((dataUrl.length * 3) / 4 / 1024);
-            resolve({ dataUrl, sizeKB });
-          };
-        };
-      });
-    }
-
-    // --- 6. FILE STATE & PREVIEWS ---
-    let listSebelum = [];
-    let listSesudah = [];
-
-    async function handleFileSelect(event, storeList, previewContainerId) {
-      const files = Array.from(event.target.files);
-      const previewContainer = document.getElementById(previewContainerId);
-
-      for (const file of files) {
-        const result = await compressTo100KB(file);
-        storeList.push(result.dataUrl);
-
-        const card = document.createElement('div');
-        card.className = "relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shadow-sm";
-        card.innerHTML = `
-          <img src="${result.dataUrl}" class="w-full h-16 object-cover">
-          <span class="absolute bottom-0.5 right-0.5 bg-black/70 text-[8px] text-white font-medium px-1 py-0.2 rounded">${result.sizeKB}k</span>
-        `;
-        previewContainer.appendChild(card);
-      }
-    }
-
-    document.getElementById('inputSebelum').addEventListener('change', (e) => {
-      handleFileSelect(e, listSebelum, 'previewSebelum');
-    });
-
-    document.getElementById('inputSesudah').addEventListener('change', (e) => {
-      handleFileSelect(e, listSesudah, 'previewSesudah');
-    });
-
-    // --- 7. DATABASE INDEXEDDB (STORAGE LOCALHOST) ---
+    // --- 1. INDEXED DB CONTROLLER ---
     const DB_NAME = 'AndroidMaintenanceDB';
     const STORE_NAME = 'laporan';
     let db;
@@ -411,7 +269,7 @@
     function simpanDB(data) {
       return new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, 'readwrite');
-        const req = tx.objectStore(STORE_NAME).add(data);
+        const req = data.id ? tx.objectStore(STORE_NAME).put(data) : tx.objectStore(STORE_NAME).add(data);
         req.onsuccess = () => resolve(req.result);
         req.onerror = (e) => reject(e);
       });
@@ -426,7 +284,25 @@
       });
     }
 
-    function hapusDB() {
+    function ambilSatuDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).get(Number(id));
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function hapusSatuDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const req = tx.objectStore(STORE_NAME).delete(Number(id));
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function hapusSemuaDB() {
       return new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, 'readwrite');
         const req = tx.objectStore(STORE_NAME).clear();
@@ -435,19 +311,191 @@
       });
     }
 
-    // --- 8. SUBMIT FORM & SIMPAN KE DB ---
+    // --- 2. TABS & UI NAVIGATION ---
+    const tabForm = document.getElementById('tabForm');
+    const tabRiwayat = document.getElementById('tabRiwayat');
+    const tabInfo = document.getElementById('tabInfo');
+    const navBtnForm = document.getElementById('navBtnForm');
+    const navBtnRiwayat = document.getElementById('navBtnRiwayat');
+    const navBtnInfo = document.getElementById('navBtnInfo');
+
+    function switchTab(activeTab, activeBtn) {
+      [tabForm, tabRiwayat, tabInfo].forEach(t => t.classList.add('hidden'));
+      activeTab.classList.remove('hidden');
+
+      [navBtnForm, navBtnRiwayat, navBtnInfo].forEach(btn => {
+        btn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-slate-400";
+        btn.querySelector('div').className = "w-12 h-7 rounded-full flex items-center justify-center";
+        btn.querySelector('span').className = "text-[11px] font-medium";
+      });
+
+      activeBtn.className = "nav-item flex flex-col items-center justify-center space-y-1 text-emerald-600 dark:text-emerald-400";
+      activeBtn.querySelector('div').className = "w-12 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center";
+      activeBtn.querySelector('span').className = "text-[11px] font-bold";
+      lucide.createIcons();
+    }
+
+    navBtnForm.addEventListener('click', () => switchTab(tabForm, navBtnForm));
+    navBtnRiwayat.addEventListener('click', () => {
+      switchTab(tabRiwayat, navBtnRiwayat);
+      muatRiwayat();
+    });
+    navBtnInfo.addEventListener('click', () => switchTab(tabInfo, navBtnInfo));
+
+    // --- 3. WAKTU & TEMA OTOMATIS ---
+    const listHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const listBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+    const today = new Date();
+
+    function setWaktu() {
+      document.getElementById('hariBadge').innerText = listHari[today.getDay()];
+      document.getElementById('tglBadge').innerText = `${today.getDate()} ${listBulan[today.getMonth()]} ${today.getFullYear()}`;
+    }
+    setWaktu();
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    themeToggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    });
+
+    function showSnackbar(msg) {
+      const bar = document.getElementById('snackbar');
+      document.getElementById('snackbarMsg').innerText = msg;
+      bar.classList.remove('translate-y-32');
+      setTimeout(hideSnackbar, 3200);
+    }
+    function hideSnackbar() {
+      document.getElementById('snackbar').classList.add('translate-y-32');
+    }
+
+    // --- 4. PHOTO VIEWER MODAL ---
+    const photoViewerModal = document.getElementById('photoViewerModal');
+    const viewerImage = document.getElementById('viewerImage');
+    const viewerCaption = document.getElementById('viewerCaption');
+
+    function openPhotoViewer(url, label = '') {
+      viewerImage.src = url;
+      viewerCaption.innerText = label;
+      photoViewerModal.classList.remove('hidden');
+    }
+
+    document.getElementById('btnCloseViewer').addEventListener('click', () => {
+      photoViewerModal.classList.add('hidden');
+      viewerImage.src = '';
+    });
+
+    // --- 5. COMPRESS FOTO ~100KB ---
+    async function compressTo100KB(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxDimension = 1100;
+
+            if (w > maxDimension || h > maxDimension) {
+              if (w > h) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
+              else { w = Math.round((w * maxDimension) / h); h = maxDimension; }
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            let quality = 0.85;
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+            while (Math.round((dataUrl.length * 3) / 4 / 1024) > 105 && quality > 0.25) {
+              quality -= 0.08;
+              dataUrl = canvas.toDataURL('image/jpeg', quality);
+            }
+
+            resolve({ dataUrl, sizeKB: Math.round((dataUrl.length * 3) / 4 / 1024) });
+          };
+        };
+      });
+    }
+
+    // --- 6. FILE STATE & PREVIEWS ---
+    let listSebelum = [];
+    let listSesudah = [];
+
+    function renderPreviews(list, containerId, labelPrefix) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      list.forEach((url, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "relative group rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-pointer";
+        wrapper.innerHTML = `
+          <img src="${url}" class="w-full h-16 object-cover">
+          <button type="button" class="absolute top-0.5 right-0.5 bg-rose-600 text-white rounded-full p-0.5 opacity-80 hover:opacity-100" data-del="${idx}">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        `;
+        wrapper.querySelector('img').addEventListener('click', () => openPhotoViewer(url, `${labelPrefix} #${idx + 1}`));
+        wrapper.querySelector('[data-del]').addEventListener('click', (e) => {
+          e.stopPropagation();
+          list.splice(idx, 1);
+          renderPreviews(list, containerId, labelPrefix);
+        });
+        container.appendChild(wrapper);
+      });
+    }
+
+    async function handleFileSelect(event, storeList, containerId, label) {
+      const files = Array.from(event.target.files);
+      for (const file of files) {
+        const result = await compressTo100KB(file);
+        storeList.push(result.dataUrl);
+      }
+      renderPreviews(storeList, containerId, label);
+    }
+
+    document.getElementById('inputSebelum').addEventListener('change', (e) => {
+      handleFileSelect(e, listSebelum, 'previewSebelum', 'Foto Sebelum');
+    });
+
+    document.getElementById('inputSesudah').addEventListener('change', (e) => {
+      handleFileSelect(e, listSesudah, 'previewSesudah', 'Foto Sesudah');
+    });
+
+    // --- 7. EDIT & SUBMIT LAPORAN ---
     const form = document.getElementById('maintenanceForm');
     const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const editAlert = document.getElementById('editAlert');
+    const editIdInput = document.getElementById('editId');
+
+    function resetFormState() {
+      form.reset();
+      editIdInput.value = '';
+      editAlert.classList.add('hidden');
+      submitBtnText.innerText = "Simpan Laporan";
+      listSebelum = [];
+      listSesudah = [];
+      document.getElementById('previewSebelum').innerHTML = '';
+      document.getElementById('previewSesudah').innerHTML = '';
+      setWaktu();
+    }
+
+    document.getElementById('btnCancelEdit').addEventListener('click', resetFormState);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Menyimpan...</span>`;
 
       try {
+        const editId = editIdInput.value ? Number(editIdInput.value) : null;
         const payload = {
-          created_at: new Date().toISOString(),
           hari: document.getElementById('hariBadge').innerText,
           tanggal: document.getElementById('tglBadge').innerText,
           lokasi_kantor: document.getElementById('lokasiKantor').value,
@@ -455,28 +503,28 @@
           kondisi: document.querySelector('input[name="kondisi"]:checked').value,
           foto_sebelum: listSebelum,
           foto_sesudah: listSesudah,
-          catatan: document.getElementById('catatan').value
+          catatan: document.getElementById('catatan').value,
+          updated_at: new Date().toISOString()
         };
 
-        await simpanDB(payload);
-        showSnackbar("✓ Laporan berhasil disimpan!");
+        if (editId) payload.id = editId;
+        else payload.created_at = new Date().toISOString();
 
-        form.reset();
-        document.getElementById('previewSebelum').innerHTML = '';
-        document.getElementById('previewSesudah').innerHTML = '';
-        listSebelum = [];
-        listSesudah = [];
+        await simpanDB(payload);
+        showSnackbar(editId ? "✓ Perubahan laporan tersimpan!" : "✓ Laporan baru tersimpan!");
+        resetFormState();
+        switchTab(tabRiwayat, navBtnRiwayat);
+        await muatRiwayat();
       } catch (err) {
         console.error(err);
         showSnackbar("Gagal menyimpan data!");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Simpan Laporan</span>`;
         lucide.createIcons();
       }
     });
 
-    // --- 9. RENDER RIWAYAT LAPORAN ---
+    // --- 8. LOAD RIWAYAT, EDIT, HAPUS, EXPORT PDF ---
     async function muatRiwayat() {
       const list = await ambilSemuaDB();
       const container = document.getElementById('daftarLaporan');
@@ -485,7 +533,7 @@
       if (list.length === 0) {
         container.innerHTML = `
           <div class="p-8 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-            Belum ada laporan inspeksi tersimpan.
+            Belum ada data laporan.
           </div>
         `;
         return;
@@ -493,58 +541,150 @@
 
       list.reverse().forEach(item => {
         const card = document.createElement('div');
-        card.className = "bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-2.5";
-        
-        const badgeColor = item.kondisi === 'Normal' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400';
+        card.className = "bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-3";
 
-        let fotoSebelumHTML = item.foto_sebelum.map(url => `<img src="${url}" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700">`).join('');
-        let fotoSesudahHTML = item.foto_sesudah.map(url => `<img src="${url}" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700">`).join('');
+        const badgeBg = item.kondisi === 'Normal' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400';
 
         card.innerHTML = `
-          <div class="flex items-start justify-between">
+          <div class="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
             <div>
               <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">${item.lokasi_kantor}</span>
               <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100">${item.nama_alat_ruangan}</h4>
+              <p class="text-[10px] text-slate-400">${item.hari}, ${item.tanggal}</p>
             </div>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColor}">${item.kondisi}</span>
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full mr-1 ${badgeBg}">${item.kondisi}</span>
+              <button data-pdf="${item.id}" title="Export PDF" class="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800"><i data-lucide="file-down" class="w-4 h-4"></i></button>
+              <button data-edit="${item.id}" title="Edit" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
+              <button data-del="${item.id}" title="Hapus" class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
           </div>
-          <p class="text-[10px] text-slate-400">${item.hari}, ${item.tanggal}</p>
+
           ${item.catatan ? `<p class="text-[11px] text-slate-600 dark:text-slate-300 italic bg-slate-50 dark:bg-slate-800 p-2 rounded-lg">"${item.catatan}"</p>` : ''}
+
           <div class="grid grid-cols-2 gap-2 pt-1">
             <div>
               <span class="text-[10px] text-slate-400 block mb-1">Sebelum (${item.foto_sebelum.length})</span>
-              <div class="flex flex-wrap gap-1">${fotoSebelumHTML || '<span class="text-[10px] text-slate-400 italic">Kosong</span>'}</div>
+              <div class="flex flex-wrap gap-1" id="thumbSeb_${item.id}"></div>
             </div>
             <div>
               <span class="text-[10px] text-slate-400 block mb-1">Sesudah (${item.foto_sesudah.length})</span>
-              <div class="flex flex-wrap gap-1">${fotoSesudahHTML || '<span class="text-[10px] text-slate-400 italic">Kosong</span>'}</div>
+              <div class="flex flex-wrap gap-1" id="thumbSes_${item.id}"></div>
             </div>
           </div>
         `;
+
         container.appendChild(card);
+
+        // Render thumbnails with view click
+        const tSeb = card.querySelector(`#thumbSeb_${item.id}`);
+        item.foto_sebelum.forEach((url, i) => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.className = "w-11 h-11 object-cover rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer";
+          img.onclick = () => openPhotoViewer(url, `Sebelum #${i+1} - ${item.nama_alat_ruangan}`);
+          tSeb.appendChild(img);
+        });
+
+        const tSes = card.querySelector(`#thumbSes_${item.id}`);
+        item.foto_sesudah.forEach((url, i) => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.className = "w-11 h-11 object-cover rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer";
+          img.onclick = () => openPhotoViewer(url, `Sesudah #${i+1} - ${item.nama_alat_ruangan}`);
+          tSes.appendChild(img);
+        });
+
+        // Event Actions
+        card.querySelector(`[data-del="${item.id}"]`).onclick = async () => {
+          if (confirm("Hapus laporan ini?")) {
+            await hapusSatuDB(item.id);
+            showSnackbar("Laporan berhasil dihapus.");
+            muatRiwayat();
+          }
+        };
+
+        card.querySelector(`[data-edit="${item.id}"]`).onclick = async () => {
+          const data = await ambilSatuDB(item.id);
+          if (!data) return;
+
+          document.getElementById('lokasiKantor').value = data.lokasi_kantor;
+          document.getElementById('namaAlat').value = data.nama_alat_ruangan;
+          document.getElementById('catatan').value = data.catatan || '';
+          document.querySelector(`input[name="kondisi"][value="${data.kondisi}"]`).checked = true;
+
+          listSebelum = [...(data.foto_sebelum || [])];
+          listSesudah = [...(data.foto_sesudah || [])];
+          renderPreviews(listSebelum, 'previewSebelum', 'Foto Sebelum');
+          renderPreviews(listSesudah, 'previewSesudah', 'Foto Sesudah');
+
+          editIdInput.value = data.id;
+          editAlert.classList.remove('hidden');
+          submitBtnText.innerText = "Simpan Perubahan";
+
+          switchTab(tabForm, navBtnForm);
+        };
+
+        card.querySelector(`[data-pdf="${item.id}"]`).onclick = () => exportToPDF(item);
       });
+
       lucide.createIcons();
     }
 
-    // --- 10. BACKUP DATA JSON & HAPUS ---
-    document.getElementById('btnExport').addEventListener('click', async () => {
-      const records = await ambilSemuaDB();
-      if (records.length === 0) {
-        showSnackbar("Belum ada data untuk diekspor!");
-        return;
-      }
-      const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `maintenance_backup_${Date.now()}.json`;
-      a.click();
-    });
+    // --- 9. EXPORT PDF GENERATOR ---
+    function exportToPDF(item) {
+      const pdfContainer = document.createElement('div');
+      pdfContainer.style.padding = "24px";
+      pdfContainer.style.fontFamily = "Arial, sans-serif";
+      pdfContainer.style.color = "#1e293b";
+
+      let fSeb = item.foto_sebelum.map(u => `<img src="${u}" style="width:130px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #cbd5e1;margin-right:8px;margin-bottom:8px;">`).join('');
+      let fSes = item.foto_sesudah.map(u => `<img src="${u}" style="width:130px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #cbd5e1;margin-right:8px;margin-bottom:8px;">`).join('');
+
+      pdfContainer.innerHTML = `
+        <div style="border-bottom:2px solid #059669;padding-bottom:12px;margin-bottom:16px;">
+          <h2 style="margin:0;color:#059669;font-size:20px;">LAPORAN PEMELIHARAAN FASILITAS</h2>
+          <p style="margin:4px 0 0;font-size:12px;color:#64748b;">Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}</p>
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">
+          <tr><td style="padding:6px 0;width:150px;font-weight:bold;">Waktu Inspeksi</td><td>: ${item.hari}, ${item.tanggal}</td></tr>
+          <tr><td style="padding:6px 0;font-weight:bold;">Lokasi Kantor</td><td>: ${item.lokasi_kantor}</td></tr>
+          <tr><td style="padding:6px 0;font-weight:bold;">Nama Alat / Ruangan</td><td>: ${item.nama_alat_ruangan}</td></tr>
+          <tr><td style="padding:6px 0;font-weight:bold;">Kondisi</td><td>: <b>${item.kondisi}</b></td></tr>
+          <tr><td style="padding:6px 0;font-weight:bold;">Catatan</td><td>: ${item.catatan || '-'}</td></tr>
+        </table>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="margin:0 0 8px;font-size:12px;color:#059669;text-transform:uppercase;">Dokumentasi Foto Sebelum:</h4>
+          <div>${fSeb || '<span style="font-size:11px;color:#94a3b8;font-style:italic;">Tidak ada foto</span>'}</div>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 8px;font-size:12px;color:#059669;text-transform:uppercase;">Dokumentasi Foto Sesudah:</h4>
+          <div>${fSes || '<span style="font-size:11px;color:#94a3b8;font-style:italic;">Tidak ada foto</span>'}</div>
+        </div>
+      `;
+
+      const opt = {
+        margin: 10,
+        filename: `Laporan_${item.nama_alat_ruangan.replace(/\s+/g, '_')}_${Date.now()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      showSnackbar("Memproses unduhan PDF...");
+      html2pdf().set(opt).from(pdfContainer).save().then(() => {
+        showSnackbar("✓ File PDF berhasil diunduh!");
+      });
+    }
 
     document.getElementById('btnClearAll').addEventListener('click', async () => {
-      if (confirm("Hapus semua riwayat laporan di HP ini?")) {
-        await hapusDB();
+      if (confirm("Hapus seluruh daftar riwayat laporan?")) {
+        await hapusSemuaDB();
         await muatRiwayat();
-        showSnackbar("Semua riwayat berhasil dihapus.");
+        showSnackbar("Seluruh riwayat berhasil dibersihkan.");
       }
     });
 
