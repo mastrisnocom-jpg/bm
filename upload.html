@@ -6,10 +6,13 @@
   <meta name="theme-color" content="#059669">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FacilityApp">
   <title>Teknisi Facility - Maintenance</title>
 
-  <!-- PWA Manifest Inline Data URL -->
-  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22Teknisi%20Facility%22%2C%22short_name%22%3A%22FacilityApp%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23059669%22%7D">
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -57,6 +60,10 @@
         </div>
       </div>
       <div class="flex items-center space-x-1">
+        <!-- Tombol Install PWA Cepat -->
+        <button id="btnInstallHeader" type="button" class="hidden p-2 rounded-full hover:bg-emerald-800 text-emerald-100 transition" title="Install Aplikasi">
+          <i data-lucide="download-cloud" class="w-5 h-5"></i>
+        </button>
         <button id="themeToggle" type="button" class="p-2 rounded-full hover:bg-emerald-800 transition" title="Ganti Tema">
           <i id="themeIcon" data-lucide="moon" class="w-5 h-5 text-emerald-100"></i>
         </button>
@@ -199,13 +206,23 @@
         </div>
         <div>
           <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Aplikasi Teknisi Facility</h3>
-          <p class="text-[11px] text-slate-400">Versi Standalone Android PWA</p>
+          <p class="text-[11px] text-slate-400">Versi Standalone Progressive Web App</p>
         </div>
+
+        <!-- Tombol Pasang PWA -->
+        <div id="installCard" class="hidden p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-left flex items-center justify-between">
+          <div class="text-xs">
+            <p class="font-bold text-emerald-800 dark:text-emerald-300">Pasang di Layar Depan</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400">Buka cepat seperti aplikasi native</p>
+          </div>
+          <button id="btnInstallApp" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold shadow hover:bg-emerald-700">Install</button>
+        </div>
+
         <div class="text-left text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800 p-3.5 rounded-xl">
+          <p>• <b>Offline Support</b>: Data tetap bisa diinput saat tidak ada sinyal berkat IndexedDB & Service Worker.</p>
           <p>• <b>Export PDF Rapi</b>: Menggabungkan data & foto dalam format lembar padat (grid 3 foto per baris).</p>
           <p>• <b>View & Zoom Foto</b>: Klik foto sebelum/sesudah di form maupun riwayat untuk membuka tampilan penuh.</p>
           <p>• <b>Edit & Hapus</b>: Ketuk tombol edit untuk mengubah data lama atau hapus satuan pada kartu riwayat.</p>
-          <p>• <b>Jadikan Icon di Android</b>: Buka lewat Chrome di HP, pilih titik tiga di pojok kanan atas, lalu klik <b>"Tambahkan ke Layar Utama" (Install App)</b>.</p>
         </div>
       </div>
     </section>
@@ -258,6 +275,46 @@
   </nav>
 
   <script>
+    // ==========================================
+    // 0. SERVICE WORKER & PWA INSTALL HANDLER
+    // ==========================================
+    let deferredPrompt;
+    const btnInstallApp = document.getElementById('btnInstallApp');
+    const btnInstallHeader = document.getElementById('btnInstallHeader');
+    const installCard = document.getElementById('installCard');
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('SW terdaftar dengan scope:', reg.scope))
+          .catch((err) => console.error('Gagal daftar SW:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (btnInstallHeader) btnInstallHeader.classList.remove('hidden');
+      if (installCard) installCard.classList.remove('hidden');
+    });
+
+    function promptInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showSnackbar('Terima kasih telah memasang aplikasi!');
+          }
+          deferredPrompt = null;
+          if (btnInstallHeader) btnInstallHeader.classList.add('hidden');
+          if (installCard) installCard.classList.add('hidden');
+        });
+      }
+    }
+
+    if (btnInstallApp) btnInstallApp.addEventListener('click', promptInstall);
+    if (btnInstallHeader) btnInstallHeader.addEventListener('click', promptInstall);
+
     // ==========================================
     // 1. INDEXED DB (OFFLINE LOCAL STORAGE)
     // ==========================================
@@ -607,7 +664,6 @@
 
         container.appendChild(card);
 
-        // Thumbnail Viewer Click
         const tSeb = card.querySelector(`#thumbSeb_${item.id}`);
         item.foto_sebelum.forEach((url, i) => {
           const img = document.createElement('img');
@@ -626,7 +682,6 @@
           tSes.appendChild(img);
         });
 
-        // Event Hapus
         card.querySelector(`[data-del="${item.id}"]`).onclick = async () => {
           if (confirm("Hapus laporan ini?")) {
             await hapusSatuDB(item.id);
@@ -635,7 +690,6 @@
           }
         };
 
-        // Event Edit
         card.querySelector(`[data-edit="${item.id}"]`).onclick = async () => {
           const data = await ambilSatuDB(item.id);
           if (!data) return;
@@ -657,7 +711,6 @@
           switchTab(tabForm, navBtnForm);
         };
 
-        // Event PDF
         card.querySelector(`[data-pdf="${item.id}"]`).onclick = () => exportToPDF(item);
       });
 
@@ -694,7 +747,6 @@
       const fSesHTML = generatePhotoGrid(item.foto_sesudah, "Tidak ada dokumentasi foto sesudah.");
 
       pdfContainer.innerHTML = `
-        <!-- Header Dokumen Formal -->
         <div style="border-bottom:2.5px solid #059669; padding-bottom:10px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:flex-end;">
           <div>
             <h2 style="margin:0; color:#059669; font-size:18px; font-weight:bold; letter-spacing:0.5px;">LAPORAN HASIL PEMELIHARAAN</h2>
@@ -705,7 +757,6 @@
           </div>
         </div>
 
-        <!-- Tabel Ringkasan Data (Compact) -->
         <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px;">
           <tr>
             <td style="padding:6px 10px; width:130px; font-weight:bold; color:#475569; border-bottom:1px solid #e2e8f0;">Waktu Inspeksi</td>
@@ -728,7 +779,6 @@
           </tr>` : ''}
         </table>
 
-        <!-- Grid Foto Sebelum -->
         <div style="margin-bottom:14px;">
           <div style="font-size:11px; font-weight:bold; color:#047857; text-transform:uppercase; border-left:3px solid #059669; padding-left:6px;">
             Foto Dokumentasi: SEBELUM (${item.foto_sebelum ? item.foto_sebelum.length : 0})
@@ -736,7 +786,6 @@
           ${fSebHTML}
         </div>
 
-        <!-- Grid Foto Sesudah -->
         <div>
           <div style="font-size:11px; font-weight:bold; color:#047857; text-transform:uppercase; border-left:3px solid #059669; padding-left:6px;">
             Foto Dokumentasi: SESUDAH (${item.foto_sesudah ? item.foto_sesudah.length : 0})
