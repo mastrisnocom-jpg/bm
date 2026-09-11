@@ -2,7 +2,7 @@
   "name": "Teknisi Facility Maintenance",
   "short_name": "FacilityApp",
   "description": "Aplikasi Inspeksi dan Pemeliharaan Teknisi Fasilitas Lapangan",
-  "start_url": "./index.html",
+  "start_url": "./upload.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
